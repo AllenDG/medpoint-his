@@ -1,0 +1,127 @@
+﻿generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  createdAt    DateTime @default(now())
+
+  assignedTickets Ticket[]    @relation("AssignedTickets")
+  triageRecords   TriageRecord[]
+  auditLogs       AuditLog[]
+}
+
+enum UserRole {
+  HELPDESK
+  NURSE
+  DOCTOR
+  ADMIN
+}
+
+model Patient {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  phone       String
+  email       String
+  address     String
+  createdAt   DateTime @default(now())
+
+  appointments  Appointment[]
+  tickets       Ticket[]
+  triageRecords TriageRecord[]
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  patient     Patient           @relation(fields: [patientId], references: [id])
+  patientId   String
+  doctorId    String
+  scheduledAt DateTime
+  status      AppointmentStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime          @default(now())
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Ticket {
+  id          String         @id @default(cuid())
+  patient     Patient        @relation(fields: [patientId], references: [id])
+  patientId   String
+  assignedTo  User?          @relation("AssignedTickets", fields: [assignedToId], references: [id])
+  assignedToId String?
+  status      TicketStatus   @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+  subject     String
+  description String
+  slaBreachedAt DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  ESCALATED
+  RESOLVED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model TriageRecord {
+  id        String         @id @default(cuid())
+  patient   Patient        @relation(fields: [patientId], references: [id])
+  patientId String
+  nurse     User           @relation(fields: [nursedBy], references: [id])
+  nursedBy  String
+  vitals    Json
+  priority  TriagePriority
+  status    TriageStatus   @default(WAITING)
+  notes     String?
+  createdAt DateTime       @default(now())
+}
+
+enum TriagePriority {
+  P1
+  P2
+  P3
+  P4
+}
+
+enum TriageStatus {
+  WAITING
+  IN_TRIAGE
+  ESCALATED
+  DISCHARGED
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actor      User     @relation(fields: [actorId], references: [id])
+  actorId    String
+  action     String
+  resourceId String
+  meta       Json?
+  createdAt  DateTime @default(now())
+}

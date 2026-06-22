@@ -1,0 +1,16 @@
+﻿@import "tailwindcss";
+
+@layer base {
+  :root {
+    --radius: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Poppins", sans-serif;
+    @apply bg-neutral-50 text-neutral-900 antialiased;
+  }
+}
