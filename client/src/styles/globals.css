@@ -14,3 +14,214 @@
     @apply bg-neutral-50 text-neutral-900 antialiased;
   }
 }
+
+/* ── Portal: keyframes (can't be expressed with Tailwind utilities) ── */
+@keyframes annIn    { from { transform: translateY(-100%) } to { transform: translateY(0) } }
+@keyframes drawerIn { from { transform: translateX(100%) }  to { transform: translateX(0) } }
+@keyframes panelIn  { from { transform: translateX(100%) }  to { transform: translateX(0) } }
+@keyframes toastIn  { from { transform: translateX(110%); opacity: 0 } to { transform: translateX(0); opacity: 1 } }
+@keyframes portalSpin { to { transform: rotate(360deg) } }
+@keyframes portalPing { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+
+/* ── Portal: scroll-reveal (uses !important override, must live in CSS) ── */
+.anim-hidden {
+  opacity: 0 !important;
+  transform: translateY(16px) !important;
+  transition: opacity .55s ease, transform .55s ease !important;
+}
+
+/* ── Portal: nav-link underline pseudo-element animation ── */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute; bottom: 0; left: 14px;
+  width: 0; height: 2px;
+  background: #5B65DC;
+  transition: width .2s ease;
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: calc(100% - 28px);
+}
+
+/* ── Portal: tooltip pseudo-elements ── */
+[data-tip] { position: relative; }
+[data-tip]:hover::before {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 8px);
+  left: 50%; transform: translateX(-50%);
+  background: #122056; color: #fff;
+  padding: 5px 12px; border-radius: 6px;
+  font-size: 11.5px; white-space: nowrap;
+  pointer-events: none; z-index: 2000;
+  font-family: 'Poppins', sans-serif; font-weight: 500;
+}
+[data-tip]:hover::after {
+  content: '';
+  position: absolute; bottom: calc(100% + 3px);
+  left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: #122056;
+  pointer-events: none; z-index: 2000;
+}
+
+/* ── Portal: named animation classes used via className ── */
+.ann-bar-enter { animation: annIn .35s ease; }
+.panel-enter   { animation: panelIn .28s ease; }
+.drawer-enter  { animation: drawerIn .24s ease; }
+.toast-enter   { animation: toastIn .3s ease; }
+.portal-spin   { animation: portalSpin .75s linear infinite; }
+.portal-ping   { animation: portalPing 2s infinite; }
+
+/* ── Portal: reusable component classes ── */
+@layer components {
+
+  /* Responsive show/hide helpers */
+  .desk { display: none; }
+  @media (min-width: 1024px) { .desk { display: flex; } }
+  .mob  { display: flex; }
+  @media (min-width: 1024px) { .mob  { display: none; } }
+
+  /* Primary button */
+  .btn-p {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 0 20px;
+    background: #5B65DC; color: #fff;
+    border: none; border-radius: 10px;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background .18s, transform .12s;
+  }
+  .btn-p:hover { background: #4a54cb; }
+  .btn-p:active { transform: scale(.97); }
+
+  /* Outline button */
+  .btn-o {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 0 18px;
+    background: #fff; color: #122056;
+    border: 1.5px solid #E4E8EF; border-radius: 10px;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: border-color .18s, background .18s;
+  }
+  .btn-o:hover { border-color: #5B65DC; color: #5B65DC; }
+
+  /* Navbar link (base — ::after handled above outside @layer) */
+  .nav-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 0 14px; height: 64px;
+    background: transparent; border: none;
+    font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600;
+    color: #475569; cursor: pointer;
+    transition: color .18s;
+  }
+  .nav-link:hover, .nav-link.active { color: #122056; }
+
+  /* Dropdown item */
+  .dd-item {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 7px 12px;
+    background: transparent; border: none; border-radius: 8px;
+    font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500;
+    color: #475569; cursor: pointer; text-align: left;
+    transition: background .15s, color .15s;
+  }
+  .dd-item:hover { background: #F4F6F9; color: #122056; }
+
+  /* Form inputs */
+  .f-input {
+    display: block; width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid #E4E8EF; border-radius: 9px;
+    font-family: 'Poppins', sans-serif; font-size: 13.5px; color: #122056;
+    background: #fff; outline: none;
+    transition: border-color .2s;
+  }
+  .f-input:focus { border-color: #5B65DC; }
+  .f-input::placeholder { color: #94A3B8; }
+
+  .f-select {
+    display: block; width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid #E4E8EF; border-radius: 9px;
+    font-family: 'Poppins', sans-serif; font-size: 13.5px; color: #122056;
+    background: #fff; outline: none; cursor: pointer;
+    transition: border-color .2s; appearance: none;
+  }
+  .f-select:focus { border-color: #5B65DC; }
+
+  /* Tab buttons (profile panel / booking modal) */
+  .tab-btn {
+    flex: 1; padding: 13px 0;
+    background: transparent; border: none;
+    font-family: 'Poppins', sans-serif; font-size: 13.5px; font-weight: 600;
+    color: #94A3B8; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color .18s, border-color .18s;
+  }
+  .tab-btn:hover { color: #122056; }
+  .tab-btn.active { color: #5B65DC; border-bottom-color: #5B65DC; }
+
+  /* Date picker buttons */
+  .date-btn {
+    flex: 1; padding: 9px 4px;
+    background: #F4F6F9; border: 2px solid transparent; border-radius: 10px;
+    font-family: 'Poppins', sans-serif; text-align: center; color: #122056;
+    cursor: pointer; transition: all .18s;
+  }
+  .date-btn:hover { background: #EEEFFD; border-color: #5B65DC; }
+  .date-btn.sel   { background: #5B65DC; border-color: #5B65DC; color: #fff; }
+
+  /* Time slot buttons */
+  .slot-btn {
+    padding: 7px 14px;
+    background: #F4F6F9; border: 1.5px solid #E4E8EF; border-radius: 8px;
+    font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600;
+    color: #122056; cursor: pointer; transition: all .18s;
+  }
+  .slot-btn:hover:not(.unavail) { border-color: #5B65DC; color: #5B65DC; }
+  .slot-btn.sel    { background: #5B65DC; border-color: #5B65DC; color: #fff; }
+  .slot-btn.unavail {
+    text-decoration: line-through; opacity: .45; cursor: not-allowed;
+  }
+
+  /* Search input wrapper focus ring */
+  .search-wrap:focus-within {
+    border-color: #5B65DC !important;
+  }
+
+  /* Contact page grid — stacks on mobile */
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 900px) {
+    .contact-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Stepper components */
+  .step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #E4E8EF; background: #fff;
+    transition: all .2s;
+  }
+  .step-dot.active  { background: #5B65DC; border-color: #5B65DC; }
+  .step-dot.done    { background: #16A34A; border-color: #16A34A; }
+  .step-dot.pending { background: #fff; border-color: #E4E8EF; }
+
+  .step-line {
+    flex: 1; height: 2px; margin: 0 4px;
+    background: #E4E8EF; transition: background .3s;
+  }
+  .step-line.done { background: #16A34A; }
+
+  .step-label {
+    font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 600;
+    text-align: center; transition: color .2s;
+  }
+  .step-label.active  { color: #5B65DC; }
+  .step-label.done    { color: #16A34A; }
+  .step-label.pending { color: #94A3B8; }
+}
+
+
