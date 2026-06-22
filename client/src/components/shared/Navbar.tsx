@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/features/public-site/types';
 import { PortalActions } from '@/features/public-site/hooks/usePortalState';
+import { useAuthStore } from '@/features/auth/store/auth.store';
 
 interface Props {
   screen: Screen;
@@ -18,6 +20,20 @@ const NAV_LINKS: { label: string; screen: Screen; action: keyof PortalActions }[
 ];
 
 export function Navbar({ screen, annOffset, isDrOpen, actions }: Props) {
+  const navigate  = useNavigate();
+  const user      = useAuthStore(s => s.user);
+  const clearAuth = useAuthStore(s => s.clearAuth);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const dashboardPath =
+    user?.role === 'HELPDESK' || user?.role === 'ADMIN' ? '/helpdesk' :
+    user?.role === 'NURSE' ? `/nurse/${user.id}` : null;
+
+  function handleLogout() {
+    clearAuth();
+    setUserMenuOpen(false);
+  }
+
   return (
     <header
       className="fixed left-0 right-0 z-[400] bg-white transition-[top] duration-300"
@@ -58,18 +74,25 @@ export function Navbar({ screen, annOffset, isDrOpen, actions }: Props) {
 
             {isDrOpen && (
               <div
-                className="absolute top-16 left-0 w-[480px] bg-white rounded-lg p-5 z-[500]"
-                style={{ boxShadow: '0 12px 40px rgba(18,32,86,.14)', border: '1px solid #E4E8EF' }}
+                className="absolute top-16 left-0 w-[500px] bg-white rounded-2xl p-5 z-[500]"
+                style={{ boxShadow: '0 16px 48px rgba(18,32,86,.16)', border: '1.5px solid #E4E8EF' }}
                 onMouseEnter={actions.openDrMenu}
                 onMouseLeave={actions.closeMenus}
               >
                 <div className="grid grid-cols-2 gap-5 mb-[14px]">
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[.07em] mb-2" style={{ color: '#94A3B8' }}>By Specialty</p>
-                    {['Cardiology','Neurology','Orthopedics','Pediatrics'].map(sp => (
-                      <button key={sp} onClick={actions.goBook} className="dd-item">
-                        <span className="material-icons-outlined text-[15px]" style={{ color: '#5B65DC' }}>favorite</span>
-                        {sp}
+                    {[
+                      { label: 'Cardiology',  icon: 'favorite' },
+                      { label: 'Neurology',   icon: 'psychology' },
+                      { label: 'Orthopedics', icon: 'accessibility_new' },
+                      { label: 'Pediatrics',  icon: 'child_care' },
+                    ].map(sp => (
+                      <button key={sp.label} onClick={actions.goBook} className="dd-item">
+                        <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#EEEFFD' }}>
+                          <span className="material-icons-outlined text-[14px]" style={{ color: '#5B65DC' }}>{sp.icon}</span>
+                        </span>
+                        {sp.label}
                       </button>
                     ))}
                     <button onClick={actions.goBook} className="flex items-center px-3 py-1.5 text-[13px] font-semibold bg-transparent border-0 cursor-pointer w-full text-left" style={{ color: '#5B65DC', fontFamily: "'Poppins',sans-serif" }}>
@@ -84,7 +107,9 @@ export function Navbar({ screen, annOffset, isDrOpen, actions }: Props) {
                       { icon: 'medical_services', label: 'All Services' },
                     ].map(q => (
                       <button key={q.label} onClick={actions.goBook} className="dd-item">
-                        <span className="material-icons-outlined text-[15px]" style={{ color: '#5B65DC' }}>{q.icon}</span>
+                        <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#EEEFFD' }}>
+                          <span className="material-icons-outlined text-[14px]" style={{ color: '#5B65DC' }}>{q.icon}</span>
+                        </span>
                         {q.label}
                       </button>
                     ))}
@@ -105,12 +130,79 @@ export function Navbar({ screen, annOffset, isDrOpen, actions }: Props) {
           </div>
         </div>
 
-        {/* Desktop CTA */}
+        {/* Desktop CTA — auth-aware */}
         <div className="desk items-center gap-2 ml-auto flex-shrink-0">
-          <button onClick={actions.goBook} className="btn-p h-10 px-5 text-sm" data-tip="Book an appointment online">
-            <span className="material-icons-outlined text-base">calendar_today</span>
-            Book Now
-          </button>
+          {!user ? (
+            /* Not logged in → Login button */
+            <button
+              onClick={() => navigate('/login')}
+              className="btn-p h-10 px-5 text-sm"
+            >
+              <span className="material-icons-outlined text-base">login</span>
+              Login
+            </button>
+          ) : dashboardPath ? (
+            /* Staff user → Go to Dashboard */
+            <button
+              onClick={() => navigate(dashboardPath)}
+              className="btn-p h-10 px-5 text-sm"
+            >
+              <span className="material-icons-outlined text-base">dashboard</span>
+              Dashboard
+            </button>
+          ) : (
+            /* Patient → avatar + dropdown */
+            <div className="relative">
+              <button
+                onClick={() => setUserMenuOpen(v => !v)}
+                className="flex items-center gap-2 h-10 px-3 rounded-xl border-0 cursor-pointer transition-colors"
+                style={{ background: '#F4F6F9', border: '1.5px solid #E4E8EF', fontFamily: "'Poppins',sans-serif" }}
+              >
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: '#5B65DC' }}>
+                  {user.name[0]}
+                </div>
+                <span className="text-[13.5px] font-semibold" style={{ color: '#122056' }}>
+                  {user.name.split(' ')[0]}
+                </span>
+                <span className="material-icons-outlined text-[16px]" style={{ color: '#94A3B8' }}>expand_more</span>
+              </button>
+
+              {userMenuOpen && (
+                <div
+                  className="absolute top-12 right-0 bg-white rounded-xl py-1.5 z-[600] min-w-[200px]"
+                  style={{ boxShadow: '0 12px 40px rgba(18,32,86,.14)', border: '1.5px solid #E4E8EF' }}
+                >
+                  <div className="px-4 py-2.5 mb-1" style={{ borderBottom: '1px solid #E4E8EF' }}>
+                    <div className="text-[13px] font-semibold" style={{ color: '#122056' }}>{user.name}</div>
+                    <div className="text-[11.5px]" style={{ color: '#94A3B8' }}>{user.email}</div>
+                  </div>
+                  {[
+                    { icon: 'calendar_today', label: 'My Appointments', action: actions.goBook },
+                    { icon: 'person_outline', label: 'My Profile',       action: actions.goBook },
+                  ].map(item => (
+                    <button
+                      key={item.label}
+                      onClick={() => { item.action(); setUserMenuOpen(false); }}
+                      className="dd-item w-full"
+                    >
+                      <span className="material-icons-outlined text-[15px]" style={{ color: '#5B65DC' }}>{item.icon}</span>
+                      {item.label}
+                    </button>
+                  ))}
+                  <div style={{ borderTop: '1px solid #E4E8EF', marginTop: 4, paddingTop: 4 }}>
+                    <button
+                      onClick={handleLogout}
+                      className="dd-item w-full"
+                      style={{ color: '#DC2626' }}
+                    >
+                      <span className="material-icons-outlined text-[15px]">logout</span>
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile hamburger */}

@@ -151,3 +151,73 @@ export const WDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 export const MONTHS_ARR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const;
 
 export const TODAY = new Date(2026, 5, 22);
+
+export const TEAM = [
+  {
+    name: 'Dr. Elena Reyes', role: 'Medical Director', creds: 'MD, FPCS', hue: 232, initials: 'ER',
+    desc: 'Board-certified surgeon with 20+ years leading multi-specialty clinical programs across Metro Manila.',
+  },
+  {
+    name: 'Dr. Ramon Villanueva', role: 'Chief of Medicine', creds: 'MD, FACP', hue: 210, initials: 'RV',
+    desc: 'Internal medicine specialist and PhilHealth partner liaison with 18 years in clinical leadership.',
+  },
+  {
+    name: 'Ms. Christine Lim', role: 'Chief Operations Officer', creds: 'MBA, CPHQ', hue: 158, initials: 'CL',
+    desc: 'Leads branch operations, patient experience strategy, and digital health transformation initiatives.',
+  },
+  {
+    name: 'Dr. Riza Manalo', role: 'Director of Nursing', creds: 'RN, MAN', hue: 195, initials: 'RM',
+    desc: 'Oversees clinical nursing standards and staff development programs across all 5 branches.',
+  },
+] as const;
+
+export const PROCESS_STEPS = [
+  { num: '01', icon: 'search',         title: 'Find Your Doctor',  desc: 'Search by specialty, insurance, branch, or real-time availability. Filter results in seconds.' },
+  { num: '02', icon: 'calendar_today', title: 'Choose a Slot',     desc: 'Pick a date and time that works for your schedule. See live availability — no waiting lists.' },
+  { num: '03', icon: 'verified_user',  title: 'Confirm Booking',   desc: 'Enter your details, verify insurance coverage, and confirm. Instant SMS and email confirmation sent.' },
+  { num: '04', icon: 'local_hospital', title: 'Visit & Get Care',  desc: 'Walk in at your appointment time. No paperwork queues — just sign in at reception and see your doctor.' },
+] as const;
+
+export const INS_PARTNERS = [
+  { name: 'Maxicare',       icon: 'health_and_safety', color: '#0078D4' },
+  { name: 'MediCard',       icon: 'medical_services',  color: '#E63946' },
+  { name: 'PhilHealth',     icon: 'account_balance',   color: '#2D6A4F' },
+  { name: 'Intellicare',    icon: 'favorite',          color: '#5B65DC' },
+  { name: 'Insular Health', icon: 'shield',            color: '#F4A261' },
+  { name: 'Cocolife',       icon: 'verified_user',     color: '#122056' },
+] as const;
+
+export const FAQS = [
+  {
+    q: 'Do I need to create an account to book an appointment?',
+    a: 'No account required. You can book as a guest by providing your name, contact number, and email. Returning patients simply verify their phone number to access previous booking history.',
+  },
+  {
+    q: 'Which insurance plans are accepted?',
+    a: 'We accept Maxicare, MediCard, PhilHealth, Intellicare, Insular Health, and Cocolife across all 5 branches. Insurance eligibility is verified before your visit at no extra charge.',
+  },
+  {
+    q: 'Can I reschedule or cancel my appointment?',
+    a: 'Yes. Reply to your confirmation SMS or call the branch directly at least 2 hours before your appointment to reschedule or cancel without any penalty fee.',
+  },
+  {
+    q: 'How do I know if a doctor is available today?',
+    a: 'Doctors with real-time availability show a live pulsing badge on their profile card. You can also use the "Available Today" filter on the Find a Doctor page to quickly narrow results.',
+  },
+  {
+    q: 'Are my medical records and personal data secure?',
+    a: 'All records are stored with end-to-end encryption and are fully compliant with the Philippine Data Privacy Act of 2012 (RA 10173). Your data is never shared without your explicit written consent.',
+  },
+  {
+    q: 'What happens if the doctor I want has no available slots?',
+    a: 'You can join a waitlist for the doctor and branch of your choice. We will notify you via SMS immediately when a slot opens up, and you can confirm in one tap.',
+  },
+] as const;
+
+export const ACCREDITATIONS = [
+  { icon: 'verified',           label: 'DOH Accredited',         sub: 'Dept. of Health RP' },
+  { icon: 'account_balance',    label: 'PhilHealth Affiliated',   sub: 'SSS & GSIS Covered' },
+  { icon: 'workspace_premium',  label: 'JCI Standards',           sub: 'International Quality' },
+  { icon: 'science',            label: 'ISO 9001:2015',           sub: 'Certified Operations' },
+  { icon: 'security',           label: 'HIPAA Compliant',         sub: 'Data Privacy Act' },
+] as const;
