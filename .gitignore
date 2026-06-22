@@ -68,6 +68,9 @@ desktop.ini
 # ── Docker ────────────────────────────────────────────────────────────
 docker-compose.override.yml
 
+# ── Claude Code (local agent config — never commit) ───────────────────
+.claude/
+
 # ── Misc ──────────────────────────────────────────────────────────────
 *.local
 .vercel

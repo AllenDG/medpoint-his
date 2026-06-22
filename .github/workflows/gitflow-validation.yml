@@ -1,0 +1,170 @@
+name: GitFlow Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  validate-gitflow:
+    name: Validate Branch, Target & Commits
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ── 1. Validate branch name ────────────────────────────────────────
+      - name: Validate branch name
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          echo "Branch: $BRANCH"
+
+          FEATURE_BUGFIX='^(feature|bugfix)/(public|helpdesk|nurse|auth|ui|api|shared)-[a-z0-9][a-z0-9-]{1,50}$'
+          HOTFIX='^hotfix/(public|helpdesk|nurse|auth|ui|api|shared)-[a-z0-9][a-z0-9-]{1,50}$'
+          RELEASE='^release/v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
+
+          if [[ "$BRANCH" =~ $FEATURE_BUGFIX ]] || \
+             [[ "$BRANCH" =~ $HOTFIX ]] || \
+             [[ "$BRANCH" =~ $RELEASE ]]; then
+            echo "✅ Branch name valid: $BRANCH"
+          else
+            echo ""
+            echo "❌ INVALID BRANCH NAME: $BRANCH"
+            echo ""
+            echo "Required format:"
+            echo "  feature/<scope>-<description>   (e.g. feature/auth-jwt-refresh)"
+            echo "  bugfix/<scope>-<description>    (e.g. bugfix/nurse-vitals-crash)"
+            echo "  hotfix/<scope>-<description>    (e.g. hotfix/api-rate-limit-bypass)"
+            echo "  release/v<M>.<m>.<p>            (e.g. release/v1.2.0)"
+            echo ""
+            echo "Valid scopes: public | helpdesk | nurse | auth | ui | api | shared"
+            exit 1
+          fi
+
+      # ── 2. Validate PR targets correct base branch ─────────────────────
+      - name: Validate PR base target
+        env:
+          BRANCH: ${{ github.head_ref }}
+          BASE: ${{ github.base_ref }}
+        run: |
+          echo "Branch: $BRANCH  →  Base: $BASE"
+
+          FEATURE_BUGFIX='^(feature|bugfix)/'
+          RELEASE_HOTFIX='^(release|hotfix)/'
+
+          if [[ "$BRANCH" =~ $FEATURE_BUGFIX ]]; then
+            if [[ "$BASE" != "develop" ]]; then
+              echo ""
+              echo "❌ WRONG TARGET: $BRANCH must target 'develop', not '$BASE'"
+              echo "Fix: Change the PR base branch to 'develop'."
+              exit 1
+            fi
+            echo "✅ feature/bugfix → develop: correct"
+          fi
+
+          if [[ "$BRANCH" =~ $RELEASE_HOTFIX ]]; then
+            if [[ "$BASE" != "main" ]]; then
+              echo ""
+              echo "❌ WRONG TARGET: $BRANCH must target 'main', not '$BASE'"
+              echo "Fix: Change the PR base branch to 'main'."
+              exit 1
+            fi
+            echo "✅ release/hotfix → main: correct"
+          fi
+
+      # ── 3. Validate all commit messages in the PR ──────────────────────
+      - name: Validate commit messages
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          PATTERN='^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\((public|helpdesk|nurse|auth|ui|api|shared)\))?: .{1,72}$'
+          MERGE_PATTERN='^Merge '
+
+          COMMITS=$(git log --format="%s" "$BASE_SHA".."$HEAD_SHA")
+          FAILED=0
+
+          echo "Checking commits between $BASE_SHA and $HEAD_SHA:"
+          echo ""
+
+          while IFS= read -r msg; do
+            if [[ -z "$msg" ]]; then
+              continue
+            fi
+            # Skip auto-generated merge commits
+            if [[ "$msg" =~ $MERGE_PATTERN ]]; then
+              echo "  ⏭  Skipped (merge commit): $msg"
+              continue
+            fi
+            if [[ "$msg" =~ $PATTERN ]]; then
+              echo "  ✅ $msg"
+            else
+              echo "  ❌ INVALID: $msg"
+              FAILED=1
+            fi
+          done <<< "$COMMITS"
+
+          if [[ $FAILED -eq 1 ]]; then
+            echo ""
+            echo "One or more commit messages do not follow Conventional Commits."
+            echo ""
+            echo "Required format:  <type>(<scope>): <description>"
+            echo "  Types:  feat | fix | docs | style | refactor | test | chore | perf | ci | build | revert"
+            echo "  Scopes: public | helpdesk | nurse | auth | ui | api | shared  (optional)"
+            echo ""
+            echo "Examples:"
+            echo "  feat(auth): add JWT refresh token rotation"
+            echo "  fix(nurse): correct P1 triage threshold check"
+            echo "  chore: upgrade Prisma to v5.22"
+            exit 1
+          fi
+
+          echo ""
+          echo "✅ All commit messages valid."
+
+      # ── 4. Flag sensitive path changes (warning, not failure) ──────────
+      - name: Detect sensitive path changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          SENSITIVE_PATHS=(
+            "server/src/infrastructure/auth"
+            "server/src/presentation/middleware/auth.middleware.ts"
+            "server/src/presentation/middleware/role.middleware.ts"
+            "server/src/domain/rules"
+            "client/src/features/auth"
+            "client/src/app/routes/ProtectedRoute.tsx"
+            "server/prisma/schema.prisma"
+            ".github/workflows"
+          )
+
+          CHANGED=$(git diff --name-only "$BASE_SHA".."$HEAD_SHA")
+          FLAGGED=()
+
+          for path in "${SENSITIVE_PATHS[@]}"; do
+            if echo "$CHANGED" | grep -q "$path"; then
+              FLAGGED+=("$path")
+            fi
+          done
+
+          if [[ ${#FLAGGED[@]} -gt 0 ]]; then
+            echo ""
+            echo "⚠️  SENSITIVE PATHS CHANGED — 2 approvals required before merge:"
+            for f in "${FLAGGED[@]}"; do
+              echo "   • $f"
+            done
+            echo ""
+            echo "Ensure security review is complete before approving this PR."
+          else
+            echo "✅ No sensitive paths changed."
+          fi
