@@ -78,7 +78,7 @@ export function HomePage({ actions }: Props) {
                   <span className="material-icons-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ fontSize: 16, color: '#6B7280' }}>expand_more</span>
                 </div>
                 <button onClick={actions.goBook} className="btn-p shrink-0" style={{ height: 48, paddingLeft: 20, paddingRight: 20, whiteSpace: 'nowrap' }}>
-                  <span className="material-icons-outlined text-[18px]">search</span>Find a Doctor
+                  <span className="material-icons-outlined text-[18px]">search</span>Search
                 </button>
               </div>
             </div>
