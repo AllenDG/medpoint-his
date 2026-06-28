@@ -348,7 +348,7 @@ export function NurseLoginPage() {
                 <ReCAPTCHA
                   ref={recaptchaRef}
                   sitekey={RECAPTCHA_SITE_KEY}
-                  onChange={token => { setCaptchaToken(token); setCaptchaErr(false); }}
+                  onChange={(token: string | null) => { setCaptchaToken(token); setCaptchaErr(false); }}
                   onExpired={() => setCaptchaToken(null)}
                 />
                 {captchaErr && (

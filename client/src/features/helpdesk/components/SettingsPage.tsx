@@ -661,7 +661,7 @@ export default function SettingsPage() {
                                 confirmButtonColor: '#DC2626',
                                 cancelButtonColor: '#64748B',
                                 reverseButtons: true,
-                              }).then(r => {
+                              }).then((r: { isConfirmed?: boolean }) => {
                                 if (r.isConfirmed) addToast({ type: 'success', message: `Session on ${s.device} revoked` });
                               });
                             }}
@@ -711,7 +711,7 @@ export default function SettingsPage() {
                         confirmButtonColor: '#5B65DC',
                         cancelButtonColor: '#64748B',
                         reverseButtons: true,
-                      }).then(r => {
+                      }).then((r: { isConfirmed?: boolean }) => {
                         if (r.isConfirmed) { triggerSave(); setSec({ current: '', newPass: '', confirm: '' }); setEditingPassword(false); }
                       });
                     }}

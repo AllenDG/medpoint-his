@@ -516,7 +516,7 @@ export default function DashboardPage() {
       confirmButtonColor: '#5B65DC',
       cancelButtonColor: '#64748B',
       reverseButtons: true,
-    }).then(result => {
+    }).then((result: { isConfirmed?: boolean }) => {
       if (result.isConfirmed) {
         setApptUpdates(u => ({ ...u, [a.id]: 'confirmed' }));
         addToast({ type: 'success', message: `${a.patientName}'s appointment accepted` });
@@ -535,7 +535,7 @@ export default function DashboardPage() {
       confirmButtonColor: '#EF4444',
       cancelButtonColor: '#64748B',
       reverseButtons: true,
-    }).then(result => {
+    }).then((result: { isConfirmed?: boolean }) => {
       if (result.isConfirmed) {
         setApptUpdates(u => ({ ...u, [a.id]: 'cancelled' }));
         addToast({ type: 'warning', message: `${a.patientName}'s appointment declined` });
