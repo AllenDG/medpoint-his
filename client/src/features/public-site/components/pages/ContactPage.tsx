@@ -12,7 +12,7 @@ export function ContactPage({ actions }: Props) {
       {/* ── Hero ── */}
       <section className="py-[80px] pb-[72px] text-center relative overflow-hidden" style={{ background: '#122056' }}>
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle,#fff 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
-        <div className="max-w-[700px] mx-auto px-10 relative z-10">
+        <div className="max-w-[700px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
           <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-4" style={{ background: 'rgba(91,101,220,.25)', border: '1px solid rgba(91,101,220,.4)' }}>
             <span className="text-[11px] font-semibold uppercase tracking-[.08em]" style={{ color: '#A5B0FF' }}>Contact</span>
           </div>
@@ -43,7 +43,7 @@ export function ContactPage({ actions }: Props) {
 
       {/* ── Form + Info ── */}
       <section style={{ background: '#F4F6F9', padding: '72px 0 80px' }}>
-        <div className="max-w-[1440px] mx-auto px-10 grid gap-10 contact-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 grid gap-10 contact-grid">
 
           {/* Contact form */}
           <div data-animate="" className="bg-white rounded-2xl p-9" style={{ border: '1.5px solid #E4E8EF' }}>
@@ -53,7 +53,7 @@ export function ContactPage({ actions }: Props) {
             <h2 className="text-[20px] font-extrabold mb-1.5" style={{ color: '#122056' }}>How can we help?</h2>
             <p className="text-sm mb-7" style={{ color: '#94A3B8' }}>Fill in the form and our patient care team will reply within 1 business day.</p>
             <div className="flex flex-col gap-[14px]">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[12.5px] font-semibold mb-1.5" style={{ color: '#122056' }}>Full name</label>
                   <input type="text" className="f-input" placeholder="Enter your full name" />
@@ -163,7 +163,7 @@ export function ContactPage({ actions }: Props) {
 
       {/* ── Branch Locations ── */}
       <section className="bg-white py-[80px]">
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>Branch Locations</span>
@@ -197,7 +197,7 @@ export function ContactPage({ actions }: Props) {
 
       {/* ── FAQ ── */}
       <section style={{ background: '#F4F6F9', padding: '80px 0' }}>
-        <div className="max-w-[820px] mx-auto px-10">
+        <div className="max-w-[820px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>FAQ</span>

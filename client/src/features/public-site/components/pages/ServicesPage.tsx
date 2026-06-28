@@ -10,7 +10,7 @@ export function ServicesPage({ actions }: Props) {
       {/* ── Hero ── */}
       <section className="py-[80px] pb-[72px] text-center relative overflow-hidden" style={{ background: '#122056' }}>
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle,#fff 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
-        <div className="max-w-[720px] mx-auto px-10 relative z-10">
+        <div className="max-w-[720px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
           <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-4" style={{ background: 'rgba(91,101,220,.25)', border: '1px solid rgba(91,101,220,.4)' }}>
             <span className="text-[11px] font-semibold uppercase tracking-[.08em]" style={{ color: '#A5B0FF' }}>Our Services</span>
           </div>
@@ -25,7 +25,7 @@ export function ServicesPage({ actions }: Props) {
 
       {/* ── Service Cards ── */}
       <section style={{ background: '#F4F6F9', padding: '88px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-12">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>All Services</span>
@@ -37,7 +37,7 @@ export function ServicesPage({ actions }: Props) {
               Every service is available across all 5 branches, with insurance eligibility verified before your visit.
             </p>
           </div>
-          <div className="grid gap-5 svc-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
+          <div className="grid gap-5 svc-grid">
             {SERVICES_DETAILED.map((svc, i) => (
               <div key={svc.name} className="svc-card" data-animate="" data-delay={String(i * 60)}>
                 <div className="px-6 py-[22px] pb-[18px] flex items-center gap-[14px]" style={{ background: '#122056' }}>
@@ -71,7 +71,7 @@ export function ServicesPage({ actions }: Props) {
 
       {/* ── How to Get Started ── */}
       <section className="bg-white py-[88px]">
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-12">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>How to Get Started</span>
@@ -111,7 +111,7 @@ export function ServicesPage({ actions }: Props) {
 
       {/* ── Insurance Partners ── */}
       <section style={{ background: '#122056', padding: '72px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-10">
             <h2 className="font-extrabold text-white tracking-[-0.025em] mb-3" style={{ fontSize: 'clamp(20px,3vw,34px)' }}>
               We accept your insurance.

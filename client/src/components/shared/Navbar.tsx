@@ -39,7 +39,7 @@ export function Navbar({ screen, annOffset, isDrOpen, actions }: Props) {
       className="fixed left-0 right-0 z-[400] bg-white transition-[top] duration-300"
       style={{ top: annOffset, borderBottom: '1px solid #E4E8EF', boxShadow: '0 2px 16px rgba(18,32,86,.06)' }}
     >
-      <div className="max-w-[1440px] mx-auto px-10 h-16 flex items-center">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center">
         {/* Logo */}
         <button
           onClick={actions.goHome}

@@ -24,7 +24,7 @@ export function NewsPage({ newsFilter, newsFiltered, onFilter }: Props) {
       {/* ── Hero ── */}
       <section className="py-[80px] pb-[72px] text-center relative overflow-hidden" style={{ background: '#122056' }}>
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle,#fff 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
-        <div className="max-w-[700px] mx-auto px-10 relative z-10">
+        <div className="max-w-[700px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
           <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-4" style={{ background: 'rgba(91,101,220,.25)', border: '1px solid rgba(91,101,220,.4)' }}>
             <span className="text-[11px] font-semibold uppercase tracking-[.08em]" style={{ color: '#A5B0FF' }}>Hospital News</span>
           </div>
@@ -39,7 +39,7 @@ export function NewsPage({ newsFilter, newsFiltered, onFilter }: Props) {
 
       {/* ── Filter + Articles ── */}
       <section style={{ background: '#F4F6F9', padding: '56px 0 80px' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
 
           {/* Filter pills */}
           <div className="flex gap-2 mb-10 flex-wrap">
@@ -99,7 +99,7 @@ export function NewsPage({ newsFilter, newsFiltered, onFilter }: Props) {
 
               {/* Remaining articles grid */}
               {rest.length > 0 && (
-                <div className="grid gap-4 news-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
+                <div className="grid gap-4 news-grid">
                   {rest.map(n => (
                     <div key={n.id} className="card overflow-hidden" data-animate="" data-delay={String(n.delay)}>
                       <div className="h-1.5 rounded-t-[14px]" style={{ background: n.accentColor }} />
@@ -133,7 +133,7 @@ export function NewsPage({ newsFilter, newsFiltered, onFilter }: Props) {
 
       {/* ── Newsletter signup ── */}
       <section className="py-[72px]" style={{ background: '#5B65DC' }}>
-        <div className="max-w-[640px] mx-auto px-10 text-center">
+        <div className="max-w-[640px] mx-auto px-4 sm:px-6 lg:px-10 text-center">
           <div data-animate="">
             <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: 'rgba(255,255,255,.15)' }}>
               <span className="material-icons-outlined text-[26px] text-white">mail_outline</span>

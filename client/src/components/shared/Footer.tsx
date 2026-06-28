@@ -30,8 +30,8 @@ const SOCIALS = [
 export function Footer({ actions }: Props) {
   return (
     <footer className="pt-16 pb-8 bg-white" style={{ borderTop: '1.5px solid #E4E8EF' }}>
-      <div className="max-w-[1440px] mx-auto px-10">
-        <div className="grid gap-10 mb-12" style={{ gridTemplateColumns: '2fr 1fr 1fr 1.2fr' }}>
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid gap-8 mb-12 foot-grid">
 
           {/* Brand */}
           <div>
@@ -106,11 +106,11 @@ export function Footer({ actions }: Props) {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex items-center justify-between pt-6 text-[12.5px]"
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-6 text-[12.5px]"
           style={{ borderTop: '1px solid #E4E8EF', color: '#94A3B8' }}
         >
           <span>© {new Date().getFullYear()} MedPoint Hospital. All rights reserved.</span>
-          <div className="flex gap-5">
+          <div className="flex gap-5 flex-wrap">
             {['Privacy Policy', 'Terms of Service', 'Sitemap'].map(t => (
               <button key={t} className="bg-transparent border-0 cursor-pointer p-0 text-[12.5px]"
                 style={{ fontFamily: "'Poppins',sans-serif", color: '#94A3B8' }}
