@@ -79,7 +79,7 @@ export const SERVICES_DETAILED = SERVICES.map(s => ({
 export const FEATURES = [
   { icon: 'verified_user',        title: 'Insurance-Ready',     desc: 'Filter by coverage. No billing surprises.',           delay: 0   },
   { icon: 'timer',                title: 'Live Queue Tracking',  desc: 'See your queue position in real time.',               delay: 80  },
-  { icon: 'workspace_premium',    title: 'DOH-Accredited',       desc: 'Every physician government-accredited.',              delay: 160 },
+  { icon: 'workspace_premium',    title: 'Licensed Physicians',  desc: 'Every physician board-certified with active PRC license.', delay: 160 },
   { icon: 'notifications_active', title: 'Instant Confirmation', desc: 'SMS and email when appointment is approved.',         delay: 240 },
   { icon: 'event_available',      title: 'Zero Double-Booking',  desc: 'Your slot secured the moment you confirm.',           delay: 320 },
   { icon: 'folder_shared',        title: 'Secure Records',       desc: 'All visits and results in your profile.',             delay: 400 },
@@ -95,7 +95,7 @@ export const MILESTONES = [
   { year: '2010', event: 'Founded by board-certified specialists in Manila' },
   { year: '2013', event: 'North and East branches; 30+ doctors' },
   { year: '2018', event: 'Digital portal and online booking launched' },
-  { year: '2023', event: '5 branches; 2nd DOH accreditation' },
+  { year: '2023', event: '5 branches; expanded multi-specialty services' },
 ] as const;
 
 export const VALUES = [
@@ -215,7 +215,7 @@ export const FAQS = [
 ] as const;
 
 export const ACCREDITATIONS = [
-  { icon: 'verified',           label: 'DOH Accredited',         sub: 'Dept. of Health RP' },
+  { icon: 'health_and_safety',  label: 'Licensed Facility',       sub: 'Board-Certified Specialists' },
   { icon: 'account_balance',    label: 'PhilHealth Affiliated',   sub: 'SSS & GSIS Covered' },
   { icon: 'workspace_premium',  label: 'JCI Standards',           sub: 'International Quality' },
   { icon: 'science',            label: 'ISO 9001:2015',           sub: 'Certified Operations' },

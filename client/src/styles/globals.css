@@ -16,6 +16,7 @@
 }
 
 /* ── Portal: keyframes (can't be expressed with Tailwind utilities) ── */
+@keyframes cardIn   { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: translateY(0) } }
 @keyframes annIn    { from { transform: translateY(-100%) } to { transform: translateY(0) } }
 @keyframes drawerIn { from { transform: translateX(100%) }  to { transform: translateX(0) } }
 @keyframes panelIn  { from { transform: translateX(100%) }  to { transform: translateX(0) } }
@@ -279,7 +280,6 @@
     border: 1.5px solid rgba(255,255,255,.22); border-radius: 10px;
     font-family: 'Poppins', sans-serif; font-size: 13.5px; font-weight: 500;
     cursor: pointer; outline: none; appearance: none;
-    min-width: 140px; flex: 1;
     transition: border-color .2s;
   }
   .h-select:focus { border-color: rgba(255,255,255,.55); }
@@ -328,6 +328,7 @@
   @media (min-width: 1024px) {
     .feat-grid, .news-grid, .test-grid, .svc-grid { grid-template-columns: repeat(3,1fr); }
   }
+  @media (min-width: 1280px) { .feat-grid { grid-template-columns: repeat(4,1fr); } }
 
   .pillar-grid { grid-template-columns: repeat(2,1fr); }
   @media (min-width: 1024px) { .pillar-grid { grid-template-columns: repeat(4,1fr); } }
@@ -367,6 +368,11 @@
   }
   .spec-pill:hover { border-color: #5B65DC; color: #5B65DC; background: #EEEFFD; }
   .spec-pill.active { background: #5B65DC; border-color: #5B65DC; color: #fff; }
+
+  /* ── Footer responsive grid ── */
+  .foot-grid { grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) { .foot-grid { grid-template-columns: 2fr 1fr 1fr 1.2fr; } }
 
   /* ── Book page layout ── */
   .book-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }

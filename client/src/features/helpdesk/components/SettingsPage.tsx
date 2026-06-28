@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
+import Swal from 'sweetalert2';
+import { useUIStore } from '@/store/ui.store';
 
 type Tab = 'profile' | 'notifications' | 'branch' | 'security';
 const BRANCHES = ['City Clinic', 'North Branch', 'East Clinic', 'West Branch', 'South Clinic'];
@@ -92,37 +94,51 @@ function Toggle({ checked, onChange, label, id }: { checked: boolean; onChange: 
 // ── Main page ──────────────────────────────────────────────────────────────────
 export default function SettingsPage() {
   const { user } = useAuth();
+  const addToast = useUIStore(s => s.addToast);
   const [tab, setTab]   = useState<Tab>('profile');
   const [saved, setSaved] = useState(false);
   const [showDanger, setShowDanger] = useState(false);
+  const [editingProfile,  setEditingProfile]  = useState(false);
+  const [editingPrefs,    setEditingPrefs]    = useState(false);
+  const [editingNotifs,   setEditingNotifs]   = useState(false);
+  const [editingBranch,   setEditingBranch]   = useState(false);
+  const [editingPassword, setEditingPassword] = useState(false);
 
   function triggerSave() { setSaved(true); setTimeout(() => setSaved(false), 2500); }
 
   // Profile
-  const [profile, setProfile] = useState({
+  const profileInit = {
     displayName: user?.name ?? 'Helpdesk Admin',
     phone: '+63 917 000 0000',
     department: 'Patient Relations',
     language: 'English (Philippines)',
     timezone: 'Asia/Manila (UTC+8)',
     dateFormat: 'DD/MM/YYYY',
-  });
+  };
+  const [profile, setProfile] = useState(profileInit);
+  const [profileDraft, setProfileDraft] = useState(profileInit);
 
   // Notifications
-  const [notifs, setNotifs] = useState({
+  const notifsInit = {
     new_appointment: { email: true,  sms: false, inApp: true,  label: 'New appointment submitted'    },
     no_show:         { email: true,  sms: false, inApp: true,  label: 'Patient no-show alert'        },
     cancelled:       { email: false, sms: false, inApp: true,  label: 'Appointment cancelled'        },
     pending_review:  { email: true,  sms: true,  inApp: true,  label: 'Pending review reminder'      },
     daily_summary:   { email: true,  sms: false, inApp: false, label: 'End-of-day summary'           },
-  });
-  const [digestTime, setDigestTime] = useState('18:00');
-  const [quietHours, setQuietHours] = useState(false);
-  const [quietFrom, setQuietFrom]   = useState('22:00');
-  const [quietTo, setQuietTo]       = useState('08:00');
+  };
+  const [notifs,      setNotifs]      = useState(notifsInit);
+  const [notifsDraft, setNotifsDraft] = useState(notifsInit);
+  const [digestTime,      setDigestTime]      = useState('18:00');
+  const [digestTimeDraft, setDigestTimeDraft] = useState('18:00');
+  const [quietHours,      setQuietHours]      = useState(false);
+  const [quietHoursDraft, setQuietHoursDraft] = useState(false);
+  const [quietFrom,      setQuietFrom]      = useState('22:00');
+  const [quietFromDraft, setQuietFromDraft] = useState('22:00');
+  const [quietTo,      setQuietTo]      = useState('08:00');
+  const [quietToDraft, setQuietToDraft] = useState('08:00');
 
   // Branch
-  const [branchCfg, setBranchCfg] = useState({
+  const branchInit = {
     assignedBranch: 'City Clinic',
     maxDailyTotal: 30,
     maxPerDoctor: 12,
@@ -131,7 +147,9 @@ export default function SettingsPage() {
     branchAddress: '123 Clinic St, Quezon City',
     emergencyContact: 'Nurse-in-Charge: +63 917 XXX XXXX',
     hours: Object.fromEntries(DAYS.map(d => [d, { enabled: d !== 'Sunday', from: '08:00', to: '17:00' }])),
-  });
+  };
+  const [branchCfg,   setBranchCfg]   = useState(branchInit);
+  const [branchDraft, setBranchDraft] = useState(branchInit);
 
   // Security
   const [sec, setSec]   = useState({ current: '', newPass: '', confirm: '' });
@@ -153,6 +171,47 @@ export default function SettingsPage() {
     background: '#fff', outline: 'none',
   };
   const readonlyStyle: React.CSSProperties = { ...inputStyle, background: '#F8FAFC', color: '#94A3B8', cursor: 'not-allowed' };
+  const timeInputStyle: React.CSSProperties = {
+    padding: '7px 10px', width: 118,
+    border: '1.5px solid #E4E8EF', borderRadius: 6,
+    fontFamily: "'Poppins',sans-serif", fontSize: 12.5, color: '#111827',
+    background: '#fff', outline: 'none',
+  };
+  const timeReadonlyStyle: React.CSSProperties = { ...timeInputStyle, background: '#F8FAFC', color: '#94A3B8', cursor: 'not-allowed' };
+
+  function SectionEditHeader({ title, sub, editing, onEdit, onCancel, onSave }: {
+    title: string; sub?: string; editing: boolean;
+    onEdit: () => void; onCancel: () => void; onSave: () => void;
+  }) {
+    return (
+      <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #F1F5F9' }}>
+        <div>
+          <h3 className="text-[13px] font-bold" style={{ color: '#111827' }}>{title}</h3>
+          {sub && <p className="text-[11.5px] mt-0.5" style={{ color: '#6B7280' }}>{sub}</p>}
+        </div>
+        {editing ? (
+          <div className="flex gap-2">
+            <button onClick={onCancel}
+              className="h-8 px-3 border-0 cursor-pointer font-semibold text-[12px]"
+              style={{ background: '#F4F6F9', color: '#64748B', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+              Cancel
+            </button>
+            <button onClick={onSave}
+              className="h-8 px-4 border-0 cursor-pointer font-semibold text-[12px] text-white"
+              style={{ background: '#5B65DC', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+              Save Changes
+            </button>
+          </div>
+        ) : (
+          <button onClick={onEdit}
+            className="flex items-center gap-1.5 h-8 px-3 border-0 cursor-pointer font-semibold text-[12px]"
+            style={{ background: '#EEEFFD', color: '#5B65DC', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+            <span className="material-icons-outlined" style={{ fontSize: 15 }}>edit</span>Edit
+          </button>
+        )}
+      </div>
+    );
+  }
   const TH: React.CSSProperties = { padding: '9px 14px', fontSize: 10.5, fontWeight: 700, color: '#6B7280', letterSpacing: '.06em', textTransform: 'uppercase', background: '#FAFAFA', borderBottom: '1px solid #E4E8EF', borderRight: '1px solid #E4E8EF' };
   const TD: React.CSSProperties = { padding: '11px 14px', fontSize: 12.5, color: '#374151', borderBottom: '1px solid #E4E8EF', borderRight: '1px solid #E4E8EF', fontFamily: "'Poppins',sans-serif" };
 
@@ -231,58 +290,129 @@ export default function SettingsPage() {
               </div>
               {/* Right: editable forms */}
               <div>
-                <Section title="Personal Information" sub="Update your display name, contact, and department.">
-                  <div className="grid grid-cols-2 gap-4">
+                {/* Personal Information */}
+                <div className="bg-white mb-3" style={{ border: '1px solid #E4E8EF', borderRadius: 8 }}>
+                  <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #F1F5F9' }}>
                     <div>
-                      <Label htmlFor="displayName">Display Name</Label>
-                      <input id="displayName" style={inputStyle} value={profile.displayName}
-                        onChange={e => setProfile(p => ({ ...p, displayName: e.target.value }))} />
+                      <h3 className="text-[13px] font-bold" style={{ color: '#111827' }}>Personal Information</h3>
+                      <p className="text-[11.5px] mt-0.5" style={{ color: '#6B7280' }}>Your display name, contact number, and department.</p>
                     </div>
-                    <div>
-                      <Label htmlFor="phone">Phone</Label>
-                      <input id="phone" style={inputStyle} value={profile.phone}
-                        onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} />
-                    </div>
-                    <div>
-                      <Label htmlFor="department">Department</Label>
-                      <input id="department" style={inputStyle} value={profile.department}
-                        onChange={e => setProfile(p => ({ ...p, department: e.target.value }))} />
-                    </div>
-                    <div>
-                      <Label htmlFor="emailRO">Email Address</Label>
-                      <input id="emailRO" style={readonlyStyle} value={user?.email ?? ''} readOnly aria-readonly="true" />
-                      <p className="text-[10.5px] mt-1" style={{ color: '#6B7280' }}>Managed by IT — contact admin to change</p>
+                    {editingProfile ? (
+                      <div className="flex gap-2">
+                        <button onClick={() => { setProfileDraft(profile); setEditingProfile(false); }}
+                          className="h-8 px-3 border-0 cursor-pointer font-semibold text-[12px]"
+                          style={{ background: '#F4F6F9', color: '#64748B', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+                          Cancel
+                        </button>
+                        <button onClick={() => { setProfile(profileDraft); triggerSave(); setEditingProfile(false); }}
+                          className="h-8 px-4 border-0 cursor-pointer font-semibold text-[12px] text-white"
+                          style={{ background: '#5B65DC', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+                          Save Changes
+                        </button>
+                      </div>
+                    ) : (
+                      <button onClick={() => { setProfileDraft(profile); setEditingProfile(true); }}
+                        className="flex items-center gap-1.5 h-8 px-3 border-0 cursor-pointer font-semibold text-[12px]"
+                        style={{ background: '#EEEFFD', color: '#5B65DC', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+                        <span className="material-icons-outlined" style={{ fontSize: 15 }}>edit</span>Edit
+                      </button>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="displayName">Display Name</Label>
+                        <input id="displayName"
+                          style={editingProfile ? inputStyle : readonlyStyle}
+                          readOnly={!editingProfile} aria-readonly={!editingProfile}
+                          value={editingProfile ? profileDraft.displayName : profile.displayName}
+                          onChange={e => setProfileDraft(p => ({ ...p, displayName: e.target.value }))} />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Phone</Label>
+                        <input id="phone"
+                          style={editingProfile ? inputStyle : readonlyStyle}
+                          readOnly={!editingProfile} aria-readonly={!editingProfile}
+                          value={editingProfile ? profileDraft.phone : profile.phone}
+                          onChange={e => setProfileDraft(p => ({ ...p, phone: e.target.value }))} />
+                      </div>
+                      <div>
+                        <Label htmlFor="department">Department</Label>
+                        <input id="department"
+                          style={editingProfile ? inputStyle : readonlyStyle}
+                          readOnly={!editingProfile} aria-readonly={!editingProfile}
+                          value={editingProfile ? profileDraft.department : profile.department}
+                          onChange={e => setProfileDraft(p => ({ ...p, department: e.target.value }))} />
+                      </div>
+                      <div>
+                        <Label htmlFor="emailRO">Email Address</Label>
+                        <input id="emailRO" style={readonlyStyle} value={user?.email ?? ''} readOnly aria-readonly="true" />
+                        <p className="text-[10.5px] mt-1" style={{ color: '#6B7280' }}>Managed by IT — contact admin to change</p>
+                      </div>
                     </div>
                   </div>
-                </Section>
-                <Section title="Account Preferences" sub="Language, timezone, and date display format.">
-                  <div className="grid grid-cols-2 gap-4">
+                </div>
+
+                {/* Account Preferences */}
+                <div className="bg-white mb-3" style={{ border: '1px solid #E4E8EF', borderRadius: 8 }}>
+                  <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #F1F5F9' }}>
                     <div>
-                      <Label htmlFor="language">Language</Label>
-                      <select id="language" style={inputStyle} value={profile.language}
-                        onChange={e => setProfile(p => ({ ...p, language: e.target.value }))}>
-                        <option>English (Philippines)</option>
-                        <option>Filipino</option>
-                      </select>
+                      <h3 className="text-[13px] font-bold" style={{ color: '#111827' }}>Account Preferences</h3>
+                      <p className="text-[11.5px] mt-0.5" style={{ color: '#6B7280' }}>Language, timezone, and date display format.</p>
                     </div>
-                    <div>
-                      <Label htmlFor="timezone">Timezone</Label>
-                      <select id="timezone" style={inputStyle} value={profile.timezone}
-                        onChange={e => setProfile(p => ({ ...p, timezone: e.target.value }))}>
-                        <option>Asia/Manila (UTC+8)</option>
-                      </select>
-                    </div>
-                    <div>
-                      <Label htmlFor="dateFormat">Date Format</Label>
-                      <select id="dateFormat" style={inputStyle} value={profile.dateFormat}
-                        onChange={e => setProfile(p => ({ ...p, dateFormat: e.target.value }))}>
-                        <option>DD/MM/YYYY</option>
-                        <option>MM/DD/YYYY</option>
-                        <option>YYYY-MM-DD</option>
-                      </select>
+                    {editingPrefs ? (
+                      <div className="flex gap-2">
+                        <button onClick={() => setEditingPrefs(false)}
+                          className="h-8 px-3 border-0 cursor-pointer font-semibold text-[12px]"
+                          style={{ background: '#F4F6F9', color: '#64748B', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+                          Cancel
+                        </button>
+                        <button onClick={() => { triggerSave(); setEditingPrefs(false); }}
+                          className="h-8 px-4 border-0 cursor-pointer font-semibold text-[12px] text-white"
+                          style={{ background: '#5B65DC', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+                          Save Changes
+                        </button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setEditingPrefs(true)}
+                        className="flex items-center gap-1.5 h-8 px-3 border-0 cursor-pointer font-semibold text-[12px]"
+                        style={{ background: '#EEEFFD', color: '#5B65DC', borderRadius: 6, fontFamily: "'Poppins',sans-serif" }}>
+                        <span className="material-icons-outlined" style={{ fontSize: 15 }}>edit</span>Edit
+                      </button>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="language">Language</Label>
+                        <select id="language" style={editingPrefs ? inputStyle : readonlyStyle}
+                          disabled={!editingPrefs}
+                          value={profile.language} onChange={e => setProfile(p => ({ ...p, language: e.target.value }))}>
+                          <option>English (Philippines)</option>
+                          <option>Filipino</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label htmlFor="timezone">Timezone</Label>
+                        <select id="timezone" style={editingPrefs ? inputStyle : readonlyStyle}
+                          disabled={!editingPrefs}
+                          value={profile.timezone} onChange={e => setProfile(p => ({ ...p, timezone: e.target.value }))}>
+                          <option>Asia/Manila (UTC+8)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label htmlFor="dateFormat">Date Format</Label>
+                        <select id="dateFormat" style={editingPrefs ? inputStyle : readonlyStyle}
+                          disabled={!editingPrefs}
+                          value={profile.dateFormat} onChange={e => setProfile(p => ({ ...p, dateFormat: e.target.value }))}>
+                          <option>DD/MM/YYYY</option>
+                          <option>MM/DD/YYYY</option>
+                          <option>YYYY-MM-DD</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </Section>
+                </div>
                 <Section title="Linked Accounts">
                   <div className="flex items-center justify-between p-3 rounded" style={{ background: '#F8FAFC', border: '1px solid #E4E8EF', borderRadius: 6 }}>
                     <div className="flex items-center gap-3">
@@ -295,11 +425,6 @@ export default function SettingsPage() {
                     <span className="text-[10.5px] font-bold px-2 py-0.5" style={{ background: '#ECFDF5', color: '#16A34A', borderRadius: 4 }}>Connected</span>
                   </div>
                 </Section>
-                <div className="flex justify-end">
-                  <button onClick={triggerSave} className="btn-p h-9 px-5 text-[12.5px] justify-center" style={{ borderRadius: 6 }}>
-                    <span className="material-icons-outlined" style={{ fontSize: 15 }} aria-hidden="true">save</span>Save Profile
-                  </button>
-                </div>
               </div>
             </div>
           )}
@@ -307,64 +432,87 @@ export default function SettingsPage() {
           {/* ── NOTIFICATIONS ── */}
           {tab === 'notifications' && (
             <div>
-              <Section title="Notification Channels" sub="Choose how you are notified for each event.">
-                <table style={{ width: '100%', borderCollapse: 'collapse', borderRadius: 6, overflow: 'hidden', border: '1px solid #E4E8EF' }}
-                  role="grid" aria-label="Notification settings table">
-                  <thead>
-                    <tr>
-                      {['Event', 'Email', 'SMS', 'In-app'].map((h, i) => (
-                        <th key={h} scope="col" style={{ ...TH, textAlign: i === 0 ? 'left' : 'center', borderRight: i < 3 ? '1px solid #E4E8EF' : 'none' }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(notifs).map(([key, val], idx) => (
-                      <tr key={key} style={{ background: idx % 2 === 0 ? '#fff' : '#FAFAFA' }}>
-                        <td style={{ ...TD }}>{val.label}</td>
-                        {(['email', 'sms', 'inApp'] as const).map((ch, ci) => (
-                          <td key={ch} style={{ ...TD, textAlign: 'center', borderRight: ci < 2 ? '1px solid #E4E8EF' : 'none' }}>
-                            <input type="checkbox" checked={val[ch]} aria-label={`${val.label} via ${ch}`}
-                              onChange={e => setNotifs(prev => ({ ...prev, [key]: { ...prev[key as keyof typeof prev], [ch]: e.target.checked } }))}
-                              className="w-4 h-4 cursor-pointer" />
-                          </td>
+              {/* Notification Channels */}
+              <div className="bg-white mb-3" style={{ border: '1px solid #E4E8EF', borderRadius: 8 }}>
+                <SectionEditHeader
+                  title="Notification Channels"
+                  sub="Choose how you are notified for each event."
+                  editing={editingNotifs}
+                  onEdit={() => { setNotifsDraft(notifs); setDigestTimeDraft(digestTime); setQuietHoursDraft(quietHours); setQuietFromDraft(quietFrom); setQuietToDraft(quietTo); setEditingNotifs(true); }}
+                  onCancel={() => setEditingNotifs(false)}
+                  onSave={() => { setNotifs(notifsDraft); setDigestTime(digestTimeDraft); setQuietHours(quietHoursDraft); setQuietFrom(quietFromDraft); setQuietTo(quietToDraft); triggerSave(); setEditingNotifs(false); }}
+                />
+                <div className="p-5">
+                  <table style={{ width: '100%', borderCollapse: 'collapse', borderRadius: 6, overflow: 'hidden', border: '1px solid #E4E8EF' }}
+                    role="grid" aria-label="Notification settings table">
+                    <thead>
+                      <tr>
+                        {['Event', 'Email', 'SMS', 'In-app'].map((h, i) => (
+                          <th key={h} scope="col" style={{ ...TH, textAlign: i === 0 ? 'left' : 'center', borderRight: i < 3 ? '1px solid #E4E8EF' : 'none' }}>{h}</th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Section>
+                    </thead>
+                    <tbody>
+                      {Object.entries(editingNotifs ? notifsDraft : notifs).map(([key, val], idx) => (
+                        <tr key={key} style={{ background: idx % 2 === 0 ? '#fff' : '#FAFAFA' }}>
+                          <td style={{ ...TD }}>{val.label}</td>
+                          {(['email', 'sms', 'inApp'] as const).map((ch, ci) => (
+                            <td key={ch} style={{ ...TD, textAlign: 'center', borderRight: ci < 2 ? '1px solid #E4E8EF' : 'none' }}>
+                              <input type="checkbox" checked={val[ch]}
+                                disabled={!editingNotifs}
+                                aria-label={`${val.label} via ${ch}`}
+                                onChange={e => setNotifsDraft(prev => ({ ...prev, [key]: { ...prev[key as keyof typeof prev], [ch]: e.target.checked } }))}
+                                className="w-4 h-4"
+                                style={{ cursor: editingNotifs ? 'pointer' : 'not-allowed', opacity: editingNotifs ? 1 : 0.6 }} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
 
-              <div className="grid grid-cols-2 gap-4">
-                <Section title="Daily Digest" sub="Receive a summary at a scheduled time each day.">
-                  <div>
-                    <Label htmlFor="digestTime">Send digest at</Label>
-                    <input id="digestTime" type="time" style={inputStyle} value={digestTime}
-                      onChange={e => setDigestTime(e.target.value)} />
-                  </div>
-                </Section>
-                <Section title="Quiet Hours" sub="Pause notifications during specified hours.">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-[12.5px] font-semibold" style={{ color: '#111827' }}>Enable quiet hours</span>
-                    <Toggle id="quiet-toggle" checked={quietHours} onChange={setQuietHours} label="Enable quiet hours" />
-                  </div>
-                  {quietHours && (
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label htmlFor="quietFrom">From</Label>
-                        <input id="quietFrom" type="time" style={inputStyle} value={quietFrom} onChange={e => setQuietFrom(e.target.value)} />
-                      </div>
-                      <div>
-                        <Label htmlFor="quietTo">To</Label>
-                        <input id="quietTo" type="time" style={inputStyle} value={quietTo} onChange={e => setQuietTo(e.target.value)} />
-                      </div>
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <div className="text-[11.5px] font-bold mb-3" style={{ color: '#374151' }}>Daily Digest</div>
+                      <Label htmlFor="digestTime">Send digest at</Label>
+                      <input id="digestTime" type="time"
+                        style={editingNotifs ? inputStyle : readonlyStyle}
+                        readOnly={!editingNotifs} aria-readonly={!editingNotifs}
+                        value={editingNotifs ? digestTimeDraft : digestTime}
+                        onChange={e => setDigestTimeDraft(e.target.value)} />
                     </div>
-                  )}
-                </Section>
-              </div>
-              <div className="flex justify-end mt-2">
-                <button onClick={triggerSave} className="btn-p h-9 px-5 text-[12.5px] justify-center" style={{ borderRadius: 6 }}>
-                  <span className="material-icons-outlined" style={{ fontSize: 15 }} aria-hidden="true">save</span>Save Preferences
-                </button>
+                    <div>
+                      <div className="text-[11.5px] font-bold mb-3" style={{ color: '#374151' }}>Quiet Hours</div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-[12.5px] font-semibold" style={{ color: editingNotifs ? '#111827' : '#94A3B8' }}>Enable quiet hours</span>
+                        <Toggle id="quiet-toggle"
+                          checked={editingNotifs ? quietHoursDraft : quietHours}
+                          onChange={v => { if (editingNotifs) setQuietHoursDraft(v); }}
+                          label="Enable quiet hours" />
+                      </div>
+                      {(editingNotifs ? quietHoursDraft : quietHours) && (
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <Label htmlFor="quietFrom">From</Label>
+                            <input id="quietFrom" type="time"
+                              style={editingNotifs ? inputStyle : readonlyStyle}
+                              readOnly={!editingNotifs}
+                              value={editingNotifs ? quietFromDraft : quietFrom}
+                              onChange={e => setQuietFromDraft(e.target.value)} />
+                          </div>
+                          <div>
+                            <Label htmlFor="quietTo">To</Label>
+                            <input id="quietTo" type="time"
+                              style={editingNotifs ? inputStyle : readonlyStyle}
+                              readOnly={!editingNotifs}
+                              value={editingNotifs ? quietToDraft : quietTo}
+                              onChange={e => setQuietToDraft(e.target.value)} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -372,78 +520,108 @@ export default function SettingsPage() {
           {/* ── BRANCH ── */}
           {tab === 'branch' && (
             <div>
-              <div className="grid grid-cols-2 gap-4">
-                <Section title="Assignment" sub="Your assigned branch and capacity limits.">
-                  <div className="mb-4">
-                    <Label htmlFor="assignedBranch">Assigned Branch</Label>
-                    <select id="assignedBranch" style={inputStyle} value={branchCfg.assignedBranch}
-                      onChange={e => setBranchCfg(b => ({ ...b, assignedBranch: e.target.value }))}>
-                      {BRANCHES.map(b => <option key={b}>{b}</option>)}
-                    </select>
-                  </div>
-                  <div className="grid grid-cols-3 gap-3">
-                    {([
-                      { id: 'maxDaily',    label: 'Max Daily',    key: 'maxDailyTotal' },
-                      { id: 'maxPerDoc',   label: 'Per Doctor',   key: 'maxPerDoctor'  },
-                      { id: 'maxWalkIn',   label: 'Walk-ins',     key: 'maxWalkIns'    },
-                    ] as const).map(f => (
-                      <div key={f.id}>
-                        <Label htmlFor={f.id}>{f.label}</Label>
-                        <input id={f.id} type="number" min={1} max={100} style={inputStyle}
-                          value={branchCfg[f.key]}
-                          onChange={e => setBranchCfg(b => ({ ...b, [f.key]: Number(e.target.value) }))} />
+              <div className="bg-white mb-3" style={{ border: '1px solid #E4E8EF', borderRadius: 8 }}>
+                <SectionEditHeader
+                  title="Branch Configuration"
+                  sub="Assigned branch, capacity limits, contact info, and working hours."
+                  editing={editingBranch}
+                  onEdit={() => { setBranchDraft(JSON.parse(JSON.stringify(branchCfg))); setEditingBranch(true); }}
+                  onCancel={() => setEditingBranch(false)}
+                  onSave={() => { setBranchCfg(branchDraft); triggerSave(); setEditingBranch(false); }}
+                />
+                <div className="p-5">
+                  <div className="grid grid-cols-2 gap-5 mb-5">
+                    {/* Assignment */}
+                    <div>
+                      <div className="text-[11.5px] font-bold mb-3 pb-2" style={{ color: '#374151', borderBottom: '1px solid #F1F5F9' }}>Assignment &amp; Capacity</div>
+                      <div className="mb-3">
+                        <Label htmlFor="assignedBranch">Assigned Branch</Label>
+                        <select id="assignedBranch"
+                          style={editingBranch ? inputStyle : readonlyStyle}
+                          disabled={!editingBranch}
+                          value={editingBranch ? branchDraft.assignedBranch : branchCfg.assignedBranch}
+                          onChange={e => setBranchDraft(b => ({ ...b, assignedBranch: e.target.value }))}>
+                          {BRANCHES.map(b => <option key={b}>{b}</option>)}
+                        </select>
                       </div>
-                    ))}
-                  </div>
-                </Section>
-                <Section title="Branch Contact" sub="Phone, address, and emergency contact.">
-                  {([
-                    { id: 'bPhone',   label: 'Branch Phone',      key: 'branchPhone'      },
-                    { id: 'bAddr',    label: 'Address',            key: 'branchAddress'    },
-                    { id: 'bEmerg',   label: 'Emergency Contact',  key: 'emergencyContact' },
-                  ] as const).map(f => (
-                    <div key={f.id} className="mb-3">
-                      <Label htmlFor={f.id}>{f.label}</Label>
-                      <input id={f.id} style={inputStyle} value={branchCfg[f.key]}
-                        onChange={e => setBranchCfg(b => ({ ...b, [f.key]: e.target.value }))} />
-                    </div>
-                  ))}
-                </Section>
-              </div>
-              <Section title="Working Hours" sub="Set operating hours per day. Disabled days show as Closed.">
-                <div style={{ border: '1px solid #E4E8EF', borderRadius: 6, overflow: 'hidden' }}>
-                  {DAYS.map((day, i) => {
-                    const cfg = branchCfg.hours[day];
-                    return (
-                      <div key={day} className="flex items-center gap-4 px-4 py-3"
-                        style={{ borderBottom: i < DAYS.length - 1 ? '1px solid #F1F5F9' : 'none', background: cfg.enabled ? '#fff' : '#FAFAFA' }}>
-                        <label className="flex items-center gap-2 cursor-pointer" style={{ width: 112, flexShrink: 0 }}>
-                          <input type="checkbox" checked={cfg.enabled}
-                            aria-label={`Enable ${day}`}
-                            onChange={e => setBranchCfg(b => ({ ...b, hours: { ...b.hours, [day]: { ...cfg, enabled: e.target.checked } } }))}
-                            className="w-4 h-4" />
-                          <span className="text-[12.5px] font-semibold" style={{ color: cfg.enabled ? '#111827' : '#94A3B8' }}>{day}</span>
-                        </label>
-                        {cfg.enabled ? (
-                          <div className="flex items-center gap-2">
-                            <input type="time" aria-label={`${day} start time`} style={{ ...inputStyle, width: 100 }} value={cfg.from}
-                              onChange={e => setBranchCfg(b => ({ ...b, hours: { ...b.hours, [day]: { ...cfg, from: e.target.value } } }))} />
-                            <span className="text-[11.5px]" style={{ color: '#94A3B8' }}>to</span>
-                            <input type="time" aria-label={`${day} end time`} style={{ ...inputStyle, width: 100 }} value={cfg.to}
-                              onChange={e => setBranchCfg(b => ({ ...b, hours: { ...b.hours, [day]: { ...cfg, to: e.target.value } } }))} />
+                      <div className="grid grid-cols-3 gap-3">
+                        {([
+                          { id: 'maxDaily',  label: 'Max Daily',  key: 'maxDailyTotal' },
+                          { id: 'maxPerDoc', label: 'Per Doctor', key: 'maxPerDoctor'  },
+                          { id: 'maxWalkIn', label: 'Walk-ins',   key: 'maxWalkIns'    },
+                        ] as const).map(f => (
+                          <div key={f.id}>
+                            <Label htmlFor={f.id}>{f.label}</Label>
+                            <input id={f.id} type="number" min={1} max={100}
+                              style={editingBranch ? inputStyle : readonlyStyle}
+                              readOnly={!editingBranch} aria-readonly={!editingBranch}
+                              value={editingBranch ? branchDraft[f.key] : branchCfg[f.key]}
+                              onChange={e => setBranchDraft(b => ({ ...b, [f.key]: Number(e.target.value) }))} />
                           </div>
-                        ) : (
-                          <span className="text-[12px]" style={{ color: '#94A3B8' }}>Closed</span>
-                        )}
+                        ))}
                       </div>
-                    );
-                  })}
+                    </div>
+                    {/* Branch Contact */}
+                    <div>
+                      <div className="text-[11.5px] font-bold mb-3 pb-2" style={{ color: '#374151', borderBottom: '1px solid #F1F5F9' }}>Branch Contact</div>
+                      {([
+                        { id: 'bPhone', label: 'Branch Phone',     key: 'branchPhone'      },
+                        { id: 'bAddr',  label: 'Address',           key: 'branchAddress'    },
+                        { id: 'bEmerg', label: 'Emergency Contact', key: 'emergencyContact' },
+                      ] as const).map(f => (
+                        <div key={f.id} className="mb-3">
+                          <Label htmlFor={f.id}>{f.label}</Label>
+                          <input id={f.id}
+                            style={editingBranch ? inputStyle : readonlyStyle}
+                            readOnly={!editingBranch} aria-readonly={!editingBranch}
+                            value={editingBranch ? branchDraft[f.key] : branchCfg[f.key]}
+                            onChange={e => setBranchDraft(b => ({ ...b, [f.key]: e.target.value }))} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Working Hours */}
+                  <div>
+                    <div className="text-[11.5px] font-bold mb-3 pb-2" style={{ color: '#374151', borderBottom: '1px solid #F1F5F9' }}>Working Hours</div>
+                    <div style={{ border: '1px solid #E4E8EF', borderRadius: 6, overflow: 'hidden' }}>
+                      {DAYS.map((day, i) => {
+                        const cfg = editingBranch ? branchDraft.hours[day] : branchCfg.hours[day];
+                        return (
+                          <div key={day} className="flex items-center gap-4 px-4 py-3"
+                            style={{ borderBottom: i < DAYS.length - 1 ? '1px solid #F1F5F9' : 'none', background: cfg.enabled ? '#fff' : '#FAFAFA' }}>
+                            <label className="flex items-center gap-2" style={{ width: 120, flexShrink: 0, cursor: editingBranch ? 'pointer' : 'default' }}>
+                              <input type="checkbox" checked={cfg.enabled}
+                                disabled={!editingBranch}
+                                aria-label={`Enable ${day}`}
+                                onChange={e => setBranchDraft(b => ({ ...b, hours: { ...b.hours, [day]: { ...cfg, enabled: e.target.checked } } }))}
+                                className="w-4 h-4"
+                                style={{ cursor: editingBranch ? 'pointer' : 'not-allowed', opacity: editingBranch ? 1 : 0.6 }} />
+                              <span className="text-[12.5px] font-semibold" style={{ color: cfg.enabled ? '#111827' : '#94A3B8' }}>{day}</span>
+                            </label>
+                            {cfg.enabled ? (
+                              <div className="flex items-center gap-2">
+                                <input type="time" aria-label={`${day} start time`}
+                                  style={editingBranch ? timeInputStyle : timeReadonlyStyle}
+                                  readOnly={!editingBranch}
+                                  value={cfg.from}
+                                  onChange={e => setBranchDraft(b => ({ ...b, hours: { ...b.hours, [day]: { ...cfg, from: e.target.value } } }))} />
+                                <span className="text-[11.5px]" style={{ color: '#94A3B8' }}>to</span>
+                                <input type="time" aria-label={`${day} end time`}
+                                  style={editingBranch ? timeInputStyle : timeReadonlyStyle}
+                                  readOnly={!editingBranch}
+                                  value={cfg.to}
+                                  onChange={e => setBranchDraft(b => ({ ...b, hours: { ...b.hours, [day]: { ...cfg, to: e.target.value } } }))} />
+                              </div>
+                            ) : (
+                              <span className="text-[12px]" style={{ color: '#94A3B8' }}>Closed</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </Section>
-              <div className="flex justify-end mt-2">
-                <button onClick={triggerSave} className="btn-p h-9 px-5 text-[12.5px] justify-center" style={{ borderRadius: 6 }}>
-                  <span className="material-icons-outlined" style={{ fontSize: 15 }} aria-hidden="true">save</span>Save Branch Config
-                </button>
               </div>
             </div>
           )}
@@ -471,9 +649,25 @@ export default function SettingsPage() {
                       </div>
                       {s.current
                         ? <span className="text-[10.5px] font-bold px-2 py-0.5" style={{ background: '#ECFDF5', color: '#16A34A', borderRadius: 4 }}>This device</span>
-                        : <button onClick={() => {}} className="text-[11.5px] font-semibold border-0 cursor-pointer px-2 py-1 rounded"
+                        : <button
+                            onClick={() => {
+                              Swal.fire({
+                                title: 'Revoke session?',
+                                html: `<span style="font-family:'Poppins',sans-serif;font-size:13px;color:#6B7280">The session on <strong>${s.device}</strong> will be signed out immediately.</span>`,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, revoke it',
+                                cancelButtonText: 'Cancel',
+                                confirmButtonColor: '#DC2626',
+                                cancelButtonColor: '#64748B',
+                                reverseButtons: true,
+                              }).then(r => {
+                                if (r.isConfirmed) addToast({ type: 'success', message: `Session on ${s.device} revoked` });
+                              });
+                            }}
+                            className="text-[11.5px] font-semibold border-0 cursor-pointer px-2 py-1 rounded"
                             style={{ background: '#FEF2F2', color: '#DC2626', borderRadius: 4, fontFamily: "'Poppins',sans-serif" }}
-                            aria-label="Revoke iPhone 15 Safari session">Revoke</button>
+                            aria-label={`Revoke session on ${s.device}`}>Revoke</button>
                       }
                     </div>
                   ))}
@@ -498,37 +692,66 @@ export default function SettingsPage() {
 
               {/* Right: password + 2FA */}
               <div>
-                <Section title="Change Password" sub="Use a strong password of at least 8 characters.">
-                  {([
-                    { id: 'secCur', label: 'Current Password', key: 'current' as const },
-                    { id: 'secNew', label: 'New Password',     key: 'newPass' as const, hint: 'Min 8 characters' },
-                    { id: 'secCon', label: 'Confirm Password', key: 'confirm' as const },
-                  ]).map(f => (
-                    <div key={f.id} className="mb-3">
-                      <Label htmlFor={f.id}>{f.label}</Label>
-                      <input id={f.id} type="password" style={{
-                        ...inputStyle,
-                        borderColor: f.key === 'confirm' && passError ? '#EF4444' : '#E4E8EF',
-                      }}
-                        placeholder={f.hint ?? '••••••••'}
-                        value={sec[f.key]}
-                        onChange={e => setSec(s => ({ ...s, [f.key]: e.target.value }))}
-                        aria-invalid={f.key === 'confirm' && passError}
-                        aria-describedby={f.key === 'confirm' && passError ? 'pass-mismatch' : undefined} />
-                      {f.key === 'confirm' && passError && (
-                        <p id="pass-mismatch" role="alert" className="text-[11px] mt-1" style={{ color: '#EF4444' }}>
-                          Passwords do not match
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                  <button disabled={!passMatch} onClick={triggerSave}
-                    className="btn-p w-full h-9 text-[12.5px] justify-center mt-1"
-                    style={{ borderRadius: 6, opacity: passMatch ? 1 : 0.4, cursor: passMatch ? 'pointer' : 'not-allowed' }}>
-                    <span className="material-icons-outlined" style={{ fontSize: 15 }} aria-hidden="true">lock_reset</span>
-                    Update Password
-                  </button>
-                </Section>
+                <div className="bg-white mb-3" style={{ border: '1px solid #E4E8EF', borderRadius: 8 }}>
+                  <SectionEditHeader
+                    title="Change Password"
+                    sub="Use a strong password of at least 8 characters."
+                    editing={editingPassword}
+                    onEdit={() => { setSec({ current: '', newPass: '', confirm: '' }); setEditingPassword(true); }}
+                    onCancel={() => { setSec({ current: '', newPass: '', confirm: '' }); setEditingPassword(false); }}
+                    onSave={() => {
+                      if (!passMatch) return;
+                      Swal.fire({
+                        title: 'Update password?',
+                        html: `<span style="font-family:'Poppins',sans-serif;font-size:13px;color:#6B7280">Your password will be changed. You may need to log in again on other devices.</span>`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, update it',
+                        cancelButtonText: 'Back',
+                        confirmButtonColor: '#5B65DC',
+                        cancelButtonColor: '#64748B',
+                        reverseButtons: true,
+                      }).then(r => {
+                        if (r.isConfirmed) { triggerSave(); setSec({ current: '', newPass: '', confirm: '' }); setEditingPassword(false); }
+                      });
+                    }}
+                  />
+                  <div className="p-5">
+                    {!editingPassword ? (
+                      <div className="flex items-center gap-3 py-2">
+                        <span className="material-icons-outlined" style={{ fontSize: 20, color: '#9CA3AF' }}>lock</span>
+                        <span className="text-[13px]" style={{ color: '#9CA3AF' }}>••••••••••••</span>
+                        <span className="text-[11px] px-2 py-0.5 rounded" style={{ background: '#ECFDF5', color: '#16A34A', borderRadius: 4 }}>Secured</span>
+                      </div>
+                    ) : (
+                      <>
+                        {([
+                          { id: 'secCur', label: 'Current Password', key: 'current' as const },
+                          { id: 'secNew', label: 'New Password',     key: 'newPass' as const, hint: 'Min 8 characters' },
+                          { id: 'secCon', label: 'Confirm Password', key: 'confirm' as const },
+                        ]).map(f => (
+                          <div key={f.id} className="mb-3">
+                            <Label htmlFor={f.id}>{f.label}</Label>
+                            <input id={f.id} type="password" style={{
+                              ...inputStyle,
+                              borderColor: f.key === 'confirm' && passError ? '#EF4444' : '#E4E8EF',
+                            }}
+                              placeholder={f.hint ?? '••••••••'}
+                              value={sec[f.key]}
+                              onChange={e => setSec(s => ({ ...s, [f.key]: e.target.value }))}
+                              aria-invalid={f.key === 'confirm' && passError}
+                              aria-describedby={f.key === 'confirm' && passError ? 'pass-mismatch' : undefined} />
+                            {f.key === 'confirm' && passError && (
+                              <p id="pass-mismatch" role="alert" className="text-[11px] mt-1" style={{ color: '#EF4444' }}>
+                                Passwords do not match
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </div>
 
                 <Section title="Two-Factor Authentication" sub="Add an extra layer of security with an authenticator app.">
                   <div className="flex items-center justify-between mb-3">

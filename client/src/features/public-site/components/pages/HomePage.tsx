@@ -18,15 +18,15 @@ export function HomePage({ actions }: Props) {
           className="absolute inset-0 pointer-events-none"
           style={{ background: 'linear-gradient(to right,rgba(10,18,60,.97) 0%,rgba(18,32,86,.88) 38%,rgba(18,32,86,.5) 62%,rgba(18,32,86,.10) 100%)' }}
         />
-        <div className="relative z-10 max-w-[1440px] mx-auto px-10 py-[80px] pb-20 flex flex-col justify-center min-h-[80vh]">
+        <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-[80px] pb-20 flex flex-col justify-center min-h-[80vh]">
           <div className="max-w-[660px]">
             <div
               data-animate=""
               className="inline-flex items-center gap-[7px] border rounded-lg px-[14px] py-[5px] mb-5"
               style={{ background: 'rgba(91,101,220,.22)', borderColor: 'rgba(91,101,220,.45)' }}
             >
-              <span className="material-icons-outlined text-[13px]" style={{ color: '#A5B0FF' }}>verified</span>
-              <span className="text-[11px] font-semibold uppercase tracking-[.1em]" style={{ color: '#A5B0FF' }}>DOH-Accredited · Est. 2010 · 5 Branches</span>
+              <span className="material-icons-outlined text-[13px]" style={{ color: '#A5B0FF' }}>local_hospital</span>
+              <span className="text-[11px] font-semibold uppercase tracking-[.1em]" style={{ color: '#A5B0FF' }}>Board-Certified Specialists · Est. 2010 · 5 Branches</span>
             </div>
 
             <h1
@@ -51,21 +51,33 @@ export function HomePage({ actions }: Props) {
               className="rounded-xl p-5 mb-8"
               style={{ background: 'rgba(255,255,255,.09)', border: '1px solid rgba(255,255,255,.18)', backdropFilter: 'blur(20px)' }}
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[.07em] mb-[12px]" style={{ color: 'rgba(255,255,255,.6)' }}>Find a Doctor</p>
-              <div className="flex gap-[10px] flex-wrap items-center">
-                <select className="h-select">
-                  <option value="">All Specialties</option>
-                  {['Cardiology','Neurology','Orthopedics','Pediatrics','Dermatology','Family Medicine','OB-GYN','ENT','Geriatrics'].map(s => <option key={s}>{s}</option>)}
-                </select>
-                <select className="h-select">
-                  <option value="">All Insurance</option>
-                  {['Maxicare','MediCard','PhilHealth','Intellicare','Insular Health','Cocolife'].map(s => <option key={s}>{s}</option>)}
-                </select>
-                <select className="h-select" style={{ minWidth: 130, flex: 'none' }}>
-                  <option value="">Any Branch</option>
-                  {['City Clinic','North Branch','East Clinic','West Branch','South Clinic'].map(b => <option key={b}>{b}</option>)}
-                </select>
-                <button onClick={actions.goBook} className="btn-p flex-shrink-0" style={{ height: 48, paddingLeft: 22, paddingRight: 22 }}>
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="material-icons-outlined text-[13px]" style={{ color: 'rgba(255,255,255,.5)' }}>manage_search</span>
+                <p className="text-[11px] font-semibold uppercase tracking-[.07em]" style={{ color: 'rgba(255,255,255,.6)' }}>Find a Doctor</p>
+              </div>
+              <div className="flex gap-[10px] items-center">
+                <div className="relative flex-1 min-w-0">
+                  <select className="h-select" style={{ width: '100%', paddingRight: 32 }}>
+                    <option value="">All Specialties</option>
+                    {['Cardiology','Neurology','Orthopedics','Pediatrics','Dermatology','Family Medicine','OB-GYN','ENT','Geriatrics'].map(s => <option key={s}>{s}</option>)}
+                  </select>
+                  <span className="material-icons-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ fontSize: 16, color: '#6B7280' }}>expand_more</span>
+                </div>
+                <div className="relative flex-1 min-w-0">
+                  <select className="h-select" style={{ width: '100%', paddingRight: 32 }}>
+                    <option value="">All Insurance</option>
+                    {['Maxicare','MediCard','PhilHealth','Intellicare','Insular Health','Cocolife'].map(s => <option key={s}>{s}</option>)}
+                  </select>
+                  <span className="material-icons-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ fontSize: 16, color: '#6B7280' }}>expand_more</span>
+                </div>
+                <div className="relative flex-1 min-w-0">
+                  <select className="h-select" style={{ width: '100%', paddingRight: 32 }}>
+                    <option value="">Any Branch</option>
+                    {['City Clinic','North Branch','East Clinic','West Branch','South Clinic'].map(b => <option key={b}>{b}</option>)}
+                  </select>
+                  <span className="material-icons-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ fontSize: 16, color: '#6B7280' }}>expand_more</span>
+                </div>
+                <button onClick={actions.goBook} className="btn-p shrink-0" style={{ height: 48, paddingLeft: 20, paddingRight: 20, whiteSpace: 'nowrap' }}>
                   <span className="material-icons-outlined text-[18px]">search</span>Search
                 </button>
               </div>
@@ -94,7 +106,7 @@ export function HomePage({ actions }: Props) {
 
       {/* ── How It Works ── */}
       <section style={{ background: '#F4F6F9', padding: '88px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-12">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>How It Works</span>
@@ -136,7 +148,7 @@ export function HomePage({ actions }: Props) {
 
       {/* ── About snippet ── */}
       <section className="bg-white py-[88px]">
-        <div className="max-w-[1440px] mx-auto px-10 grid gap-[72px] items-center about-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 grid gap-[72px] items-center about-grid">
           <div data-animate="" className="relative">
             <div className="rounded-2xl overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(18,32,86,.14)' }}>
               <img src="/images/person_1.jpg" alt="Doctor at MedPoint" className="w-full h-[420px] object-cover object-top block" />
@@ -159,14 +171,14 @@ export function HomePage({ actions }: Props) {
               More than a clinic —<br />a complete care ecosystem.
             </h2>
             <p className="text-[15px] leading-[1.75] mb-4" style={{ color: '#475569' }}>
-              MedPoint Hospital is a DOH-accredited multi-specialty healthcare facility in Manila, serving Filipinos since 2010. We combine hospital-grade care with a genuinely patient-centered experience — accessible, transparent, and built around your life.
+              MedPoint Hospital is a licensed multi-specialty healthcare facility in Manila, serving Filipinos since 2010. We combine hospital-grade care with a genuinely patient-centered experience — accessible, transparent, and built around your life.
             </p>
             <p className="text-[15px] leading-[1.75] mb-6" style={{ color: '#475569' }}>
               With 50+ board-certified specialists, 5 clinic branches across Metro Manila, and a fully digital booking platform, we make quality healthcare easier to access than ever before.
             </p>
             <div className="flex flex-col gap-[11px] mb-7">
               {[
-                { icon: 'verified',     title: 'DOH-Accredited & PhilHealth-Affiliated', sub: 'Government-recognized since 2010. JCI-standard protocols.' },
+                { icon: 'health_and_safety', title: 'PhilHealth-Affiliated & Licensed', sub: 'Recognized healthcare provider. JCI-standard protocols.' },
                 { icon: 'groups',       title: '50+ Board-Certified Specialists',          sub: 'Credential-verified, active PRC license holders.' },
                 { icon: 'location_on',  title: '5 Clinic Branches in Metro Manila',        sub: 'City, North, East, West & South — near you.' },
                 { icon: 'phone_iphone', title: 'Fully Digital Patient Experience',          sub: 'Book, track, and manage your health from your phone.' },
@@ -196,7 +208,7 @@ export function HomePage({ actions }: Props) {
 
       {/* ── Services preview ── */}
       <section style={{ background: '#F4F6F9', padding: '88px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="flex items-end justify-between mb-11 flex-wrap gap-4">
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
@@ -213,7 +225,7 @@ export function HomePage({ actions }: Props) {
               View all services <span className="material-icons-outlined text-sm">arrow_forward</span>
             </button>
           </div>
-          <div className="grid gap-[14px] svc-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
+          <div className="grid gap-[14px] svc-grid">
             {SERVICES.map(svc => (
               <div key={svc.name} className="svc-card" data-animate="" data-delay={String(svc.delay)}>
                 <div className="px-[22px] py-5 pb-4 flex items-center gap-3" style={{ background: '#122056' }}>
@@ -243,7 +255,7 @@ export function HomePage({ actions }: Props) {
 
       {/* ── Why Patients Choose Us ── */}
       <section className="bg-white py-[88px]">
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-12">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>Why Patients Choose Us</span>
@@ -272,7 +284,7 @@ export function HomePage({ actions }: Props) {
           </div>
 
           {/* Bottom 4 — standard grid */}
-          <div className="grid gap-[14px] feat-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+          <div className="grid gap-[14px] feat-grid">
             {FEATURES.slice(2).map(feat => (
               <div key={feat.title} className="card p-[22px]" data-animate="" data-delay={String(feat.delay)}>
                 <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-[13px]" style={{ background: '#EEEFFD' }}>
@@ -288,7 +300,7 @@ export function HomePage({ actions }: Props) {
 
       {/* ── Insurance Partners ── */}
       <section style={{ background: '#F4F6F9', padding: '60px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-8">
             <p className="text-[12px] font-bold uppercase tracking-[.1em]" style={{ color: '#94A3B8' }}>Accepted Insurance Partners</p>
             <h2 className="font-extrabold tracking-[-0.02em] mt-2" style={{ fontSize: 'clamp(18px,2.5vw,28px)', color: '#122056' }}>
@@ -311,7 +323,7 @@ export function HomePage({ actions }: Props) {
 
       {/* ── News preview ── */}
       <section className="bg-white py-[88px]">
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="flex items-end justify-between mb-11 flex-wrap gap-4">
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
@@ -325,7 +337,7 @@ export function HomePage({ actions }: Props) {
               View all <span className="material-icons-outlined text-sm">arrow_forward</span>
             </button>
           </div>
-          <div className="grid gap-[14px] news-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
+          <div className="grid gap-[14px] news-grid">
             {NEWS_ALL.slice(0, 3).map(n => (
               <div key={n.id} className="card overflow-hidden" data-animate="" data-delay={String(n.delay)}>
                 <div className="h-1.5 rounded-t-[14px]" style={{ background: n.accentColor }} />
@@ -348,7 +360,7 @@ export function HomePage({ actions }: Props) {
 
       {/* ── Testimonials ── */}
       <section style={{ background: '#F4F6F9', padding: '88px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-12">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>Patient Stories</span>
@@ -358,7 +370,7 @@ export function HomePage({ actions }: Props) {
               Hear from the thousands of patients who've trusted MedPoint for their healthcare.
             </p>
           </div>
-          <div className="grid gap-[14px] test-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
+          <div className="grid gap-[14px] test-grid">
             {TESTIMONIALS.map(t => (
               <div key={t.name} className="card p-[28px] flex flex-col" data-animate="" data-delay={String(t.delay)}>
                 <div className="text-[28px] font-extrabold mb-3 leading-none" style={{ color: '#5B65DC', fontFamily: 'Georgia, serif' }}>"</div>
@@ -385,7 +397,7 @@ export function HomePage({ actions }: Props) {
 
       {/* ── Stats banner ── */}
       <section style={{ background: '#122056', padding: '56px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10 grid stat-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 grid stat-grid">
           {STATS.map((st, i) => (
             <div key={st.label} className="text-center py-6 px-4" style={{ borderRight: i < STATS.length - 1 ? '1px solid rgba(255,255,255,.08)' : 'none' }}>
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(91,101,220,.3)' }}>
@@ -401,7 +413,7 @@ export function HomePage({ actions }: Props) {
       {/* ── CTA ── */}
       <section className="py-[88px] relative overflow-hidden" style={{ background: '#5B65DC' }}>
         <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle,#fff 1px,transparent 1px)', backgroundSize: '22px 22px' }} />
-        <div data-animate="" className="max-w-[580px] mx-auto px-10 text-center relative z-10">
+        <div data-animate="" className="max-w-[580px] mx-auto px-4 sm:px-6 lg:px-10 text-center relative z-10">
           <h2 className="font-extrabold text-white leading-[1.1] tracking-[-0.025em] mb-3" style={{ fontSize: 'clamp(26px,4vw,48px)' }}>
             Book Your Appointment Now.
           </h2>

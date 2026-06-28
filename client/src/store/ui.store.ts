@@ -14,11 +14,14 @@ interface UIState {
   toggleSidebar: () => void;
 }
 
-export const useUIStore = create<UIState>((set) => ({
+export const useUIStore = create<UIState>((set, get) => ({
   toasts: [],
   sidebarOpen: true,
-  addToast: (toast) =>
-    set((s) => ({ toasts: [...s.toasts, { ...toast, id: crypto.randomUUID() }] })),
+  addToast: (toast) => {
+    const id = crypto.randomUUID();
+    set((s) => ({ toasts: [...s.toasts, { ...toast, id }] }));
+    setTimeout(() => get().removeToast(id), 5000);
+  },
   removeToast: (id) =>
     set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
