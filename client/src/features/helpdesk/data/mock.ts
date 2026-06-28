@@ -23,33 +23,40 @@ export interface Appointment {
   reviewedAt?: string;
 }
 
+function d(offset: number): string {
+  const dt = new Date();
+  dt.setDate(dt.getDate() + offset);
+  return dt.toISOString().slice(0, 10);
+}
+export const TODAY = d(0);
+
 export const MOCK_PATIENTS: Patient[] = [
-  { id:'P001', name:'Maria Santos',     email:'maria.santos@gmail.com',  phone:'0917-123-4567', dob:'1985-03-12', gender:'F', insurance:'Maxicare',      address:'Quezon City',    lastVisit:'2026-06-15', totalVisits:8,  initials:'MS', hue:232 },
-  { id:'P002', name:'Jose Reyes',       email:'jose.reyes@gmail.com',    phone:'0918-234-5678', dob:'1978-07-22', gender:'M', insurance:'PhilHealth',    address:'Pasig City',     lastVisit:'2026-06-10', totalVisits:3,  initials:'JR', hue:195 },
-  { id:'P003', name:'Ana Cruz',         email:'ana.cruz@gmail.com',      phone:'0919-345-6789', dob:'1992-11-05', gender:'F', insurance:'MediCard',      address:'Mandaluyong',    lastVisit:'2026-05-28', totalVisits:12, initials:'AC', hue:158 },
-  { id:'P004', name:'Ricardo Lim',      email:'r.lim@gmail.com',         phone:'0920-456-7890', dob:'1965-01-30', gender:'M', insurance:'Intellicare',   address:'Muntinlupa',     lastVisit:'2026-06-20', totalVisits:5,  initials:'RL', hue:20  },
-  { id:'P005', name:'Patricia Tan',     email:'patricia.tan@gmail.com',  phone:'0921-567-8901', dob:'1990-08-14', gender:'F', insurance:'Maxicare',      address:'Quezon City',    lastVisit:'2026-06-18', totalVisits:2,  initials:'PT', hue:270 },
-  { id:'P006', name:'Kevin Garcia',     email:'kevin.garcia@gmail.com',  phone:'0922-678-9012', dob:'1988-04-19', gender:'M', insurance:'Cocolife',      address:'Mandaluyong',    lastVisit:'2026-06-12', totalVisits:7,  initials:'KG', hue:340 },
-  { id:'P007', name:'Elena Villanueva', email:'elena.v@gmail.com',       phone:'0923-789-0123', dob:'1975-09-25', gender:'F', insurance:'Insular Health', address:'Pasig City',    lastVisit:'2026-06-22', totalVisits:15, initials:'EV', hue:210 },
-  { id:'P008', name:'Marco Dela Cruz',  email:'marco.dc@gmail.com',      phone:'0924-890-1234', dob:'2005-12-03', gender:'M', insurance:'PhilHealth',    address:'Quezon City',    lastVisit:'2026-06-22', totalVisits:1,  initials:'MD', hue:45  },
+  { id:'P001', name:'Maria Santos',     email:'maria.santos@gmail.com',  phone:'0917-123-4567', dob:'1985-03-12', gender:'F', insurance:'Maxicare',       address:'Quezon City',  lastVisit:d(-13), totalVisits:8,  initials:'MS', hue:232 },
+  { id:'P002', name:'Jose Reyes',       email:'jose.reyes@gmail.com',    phone:'0918-234-5678', dob:'1978-07-22', gender:'M', insurance:'PhilHealth',     address:'Pasig City',   lastVisit:d(-18), totalVisits:3,  initials:'JR', hue:195 },
+  { id:'P003', name:'Ana Cruz',         email:'ana.cruz@gmail.com',      phone:'0919-345-6789', dob:'1992-11-05', gender:'F', insurance:'MediCard',       address:'Mandaluyong',  lastVisit:d(-31), totalVisits:12, initials:'AC', hue:158 },
+  { id:'P004', name:'Ricardo Lim',      email:'r.lim@gmail.com',         phone:'0920-456-7890', dob:'1965-01-30', gender:'M', insurance:'Intellicare',    address:'Muntinlupa',   lastVisit:d(-8),  totalVisits:5,  initials:'RL', hue:20  },
+  { id:'P005', name:'Patricia Tan',     email:'patricia.tan@gmail.com',  phone:'0921-567-8901', dob:'1990-08-14', gender:'F', insurance:'Maxicare',       address:'Quezon City',  lastVisit:d(-10), totalVisits:2,  initials:'PT', hue:270 },
+  { id:'P006', name:'Kevin Garcia',     email:'kevin.garcia@gmail.com',  phone:'0922-678-9012', dob:'1988-04-19', gender:'M', insurance:'Cocolife',       address:'Mandaluyong',  lastVisit:d(-16), totalVisits:7,  initials:'KG', hue:340 },
+  { id:'P007', name:'Elena Villanueva', email:'elena.v@gmail.com',       phone:'0923-789-0123', dob:'1975-09-25', gender:'F', insurance:'Insular Health', address:'Pasig City',   lastVisit:d(0),   totalVisits:15, initials:'EV', hue:210 },
+  { id:'P008', name:'Marco Dela Cruz',  email:'marco.dc@gmail.com',      phone:'0924-890-1234', dob:'2005-12-03', gender:'M', insurance:'PhilHealth',     address:'Quezon City',  lastVisit:d(0),   totalVisits:1,  initials:'MD', hue:45  },
 ];
 
 export const MOCK_APPOINTMENTS: Appointment[] = [
-  { id:'A001', patientId:'P001', patientName:'Maria Santos',     doctorId:1, doctorName:'Dr. Sarah Chen',     specialty:'Cardiology',      branch:'City Clinic',  date:'2026-06-22', time:'10:00 AM', type:'Follow-up',       status:'confirmed',  insurance:'Maxicare',       notes:'Hypertension monitoring. BP was 140/90 last visit.',  createdAt:'2026-06-19 08:30', workflowStep:'validated',  priority:'normal' },
-  { id:'A002', patientId:'P003', patientName:'Ana Cruz',         doctorId:3, doctorName:'Dr. Amara Patel',   specialty:'Pediatrics',      branch:'East Clinic',  date:'2026-06-22', time:'2:30 PM',  type:'Check-up',        status:'confirmed',  insurance:'MediCard',       notes:'Annual wellness checkup for 3-year-old.',              createdAt:'2026-06-20 10:15', workflowStep:'endorsed',   priority:'normal', endorsedTo:'nurse002', endorsedAt:'2026-06-21 09:00' },
-  { id:'A003', patientId:'P006', patientName:'Kevin Garcia',     doctorId:6, doctorName:'Dr. Lucas Kim',     specialty:'Family Medicine', branch:'South Clinic', date:'2026-06-22', time:'3:00 PM',  type:'General Consult', status:'pending',    insurance:'Cocolife',       notes:'Fever and cough for 3 days.',                          createdAt:'2026-06-22 07:45', workflowStep:'submitted',  priority:'urgent' },
-  { id:'A004', patientId:'P002', patientName:'Jose Reyes',       doctorId:2, doctorName:'Dr. Michael Torres',specialty:'Orthopedics',     branch:'North Branch', date:'2026-06-23', time:'9:00 AM',  type:'New Patient',     status:'confirmed',  insurance:'PhilHealth',     notes:'Knee pain assessment — right knee, 2 months.',         createdAt:'2026-06-21 14:00', workflowStep:'endorsed',   priority:'normal', endorsedTo:'nurse003', endorsedAt:'2026-06-22 08:30' },
-  { id:'A005', patientId:'P005', patientName:'Patricia Tan',     doctorId:5, doctorName:'Dr. Priya Sharma',  specialty:'Neurology',       branch:'West Branch',  date:'2026-06-23', time:'11:00 AM', type:'Consult',         status:'pending',    insurance:'Maxicare',       notes:'Recurring headaches, started 6 weeks ago.',            createdAt:'2026-06-22 09:00', workflowStep:'under_review', priority:'normal', reviewedBy:'Admin' },
-  { id:'A006', patientId:'P004', patientName:'Ricardo Lim',      doctorId:4, doctorName:"Dr. James O'Brien", specialty:'Dermatology',     branch:'City Clinic',  date:'2026-06-24', time:'11:00 AM', type:'Follow-up',       status:'confirmed',  insurance:'Intellicare',    notes:'Acne treatment review — 3rd session.',                 createdAt:'2026-06-18 16:00', workflowStep:'validated',  priority:'low' },
-  { id:'A007', patientId:'P007', patientName:'Elena Villanueva', doctorId:1, doctorName:'Dr. Sarah Chen',    specialty:'Cardiology',      branch:'City Clinic',  date:'2026-06-22', time:'9:00 AM',  type:'Check-up',        status:'completed',  insurance:'Insular Health', notes:'Annual cardiac screen completed. Normal results.',      createdAt:'2026-06-15 11:00', workflowStep:'completed',  priority:'normal' },
-  { id:'A008', patientId:'P008', patientName:'Marco Dela Cruz',  doctorId:3, doctorName:'Dr. Amara Patel',   specialty:'Pediatrics',      branch:'East Clinic',  date:'2026-06-20', time:'2:00 PM',  type:'New Patient',     status:'completed',  insurance:'PhilHealth',     notes:'First visit. Growth charts normal for age 20.',        createdAt:'2026-06-18 10:30', workflowStep:'completed',  priority:'normal' },
-  { id:'A009', patientId:'P001', patientName:'Maria Santos',     doctorId:6, doctorName:'Dr. Lucas Kim',     specialty:'Family Medicine', branch:'City Clinic',  date:'2026-06-19', time:'10:30 AM', type:'Follow-up',       status:'completed',  insurance:'Maxicare',       notes:'Blood pressure recheck. Now 130/85.',                  createdAt:'2026-06-14 09:00', workflowStep:'completed',  priority:'normal' },
-  { id:'A010', patientId:'P003', patientName:'Ana Cruz',         doctorId:2, doctorName:'Dr. Michael Torres',specialty:'Orthopedics',     branch:'North Branch', date:'2026-06-18', time:'3:00 PM',  type:'Consult',         status:'cancelled',  insurance:'MediCard',       notes:'Patient requested reschedule — conflict at work.',     createdAt:'2026-06-12 14:00', workflowStep:'cancelled',  priority:'normal' },
-  { id:'A011', patientId:'P006', patientName:'Kevin Garcia',     doctorId:4, doctorName:"Dr. James O'Brien", specialty:'Dermatology',     branch:'City Clinic',  date:'2026-06-25', time:'11:00 AM', type:'Follow-up',       status:'confirmed',  insurance:'Cocolife',       notes:'Post-treatment assessment.',                           createdAt:'2026-06-20 11:30', workflowStep:'endorsed',   priority:'low',    endorsedTo:'nurse001', endorsedAt:'2026-06-21 14:00' },
-  { id:'A012', patientId:'P002', patientName:'Jose Reyes',       doctorId:5, doctorName:'Dr. Priya Sharma',  specialty:'Neurology',       branch:'West Branch',  date:'2026-06-26', time:'9:30 AM',  type:'Consult',         status:'pending',    insurance:'PhilHealth',     notes:'MRI results review — ordered last week.',              createdAt:'2026-06-22 08:00', workflowStep:'submitted',  priority:'urgent' },
-  { id:'A013', patientId:'P005', patientName:'Patricia Tan',     doctorId:1, doctorName:'Dr. Sarah Chen',    specialty:'Cardiology',      branch:'City Clinic',  date:'2026-06-17', time:'10:00 AM', type:'Consult',         status:'no-show',    insurance:'Maxicare',       notes:'Did not arrive. SMS sent, no response.',               createdAt:'2026-06-14 15:00', workflowStep:'completed',  priority:'normal' },
-  { id:'A014', patientId:'P004', patientName:'Ricardo Lim',      doctorId:6, doctorName:'Dr. Lucas Kim',     specialty:'Family Medicine', branch:'South Clinic', date:'2026-06-27', time:'3:00 PM',  type:'Check-up',        status:'confirmed',  insurance:'Intellicare',    notes:'Diabetes management check. A1c due.',                 createdAt:'2026-06-21 13:00', workflowStep:'validated',  priority:'urgent' },
-  { id:'A015', patientId:'P007', patientName:'Elena Villanueva', doctorId:3, doctorName:'Dr. Amara Patel',   specialty:'Pediatrics',      branch:'East Clinic',  date:'2026-06-28', time:'2:30 PM',  type:'Follow-up',       status:'pending',    insurance:'Insular Health', notes:'Child development follow-up.',                         createdAt:'2026-06-22 10:00', workflowStep:'under_review', priority:'low', reviewedBy:'Support' },
+  { id:'A001', patientId:'P001', patientName:'Maria Santos',     doctorId:1, doctorName:'Dr. Sarah Chen',     specialty:'Cardiology',      branch:'City Clinic',  date:d(0),  time:'10:00 AM', type:'Follow-up',       status:'confirmed', insurance:'Maxicare',       notes:'Hypertension monitoring. BP was 140/90 last visit.',  createdAt:'2026-06-19 08:30', workflowStep:'validated',    priority:'normal' },
+  { id:'A002', patientId:'P003', patientName:'Ana Cruz',         doctorId:3, doctorName:'Dr. Amara Patel',   specialty:'Pediatrics',      branch:'East Clinic',  date:d(0),  time:'2:30 PM',  type:'Check-up',        status:'confirmed', insurance:'MediCard',       notes:'Annual wellness checkup for 3-year-old.',              createdAt:'2026-06-20 10:15', workflowStep:'endorsed',     priority:'normal', endorsedTo:'nurse002', endorsedAt:'2026-06-21 09:00' },
+  { id:'A003', patientId:'P006', patientName:'Kevin Garcia',     doctorId:6, doctorName:'Dr. Lucas Kim',     specialty:'Family Medicine', branch:'South Clinic', date:d(0),  time:'3:00 PM',  type:'General Consult', status:'pending',   insurance:'Cocolife',       notes:'Fever and cough for 3 days.',                          createdAt:'2026-06-22 07:45', workflowStep:'submitted',    priority:'urgent' },
+  { id:'A004', patientId:'P002', patientName:'Jose Reyes',       doctorId:2, doctorName:'Dr. Michael Torres',specialty:'Orthopedics',     branch:'North Branch', date:d(1),  time:'9:00 AM',  type:'New Patient',     status:'confirmed', insurance:'PhilHealth',     notes:'Knee pain assessment — right knee, 2 months.',         createdAt:'2026-06-21 14:00', workflowStep:'endorsed',     priority:'normal', endorsedTo:'nurse003', endorsedAt:'2026-06-22 08:30' },
+  { id:'A005', patientId:'P005', patientName:'Patricia Tan',     doctorId:5, doctorName:'Dr. Priya Sharma',  specialty:'Neurology',       branch:'West Branch',  date:d(1),  time:'11:00 AM', type:'Consult',         status:'pending',   insurance:'Maxicare',       notes:'Recurring headaches, started 6 weeks ago.',            createdAt:'2026-06-22 09:00', workflowStep:'under_review', priority:'normal', reviewedBy:'Admin' },
+  { id:'A006', patientId:'P004', patientName:'Ricardo Lim',      doctorId:4, doctorName:"Dr. James O'Brien", specialty:'Dermatology',     branch:'City Clinic',  date:d(2),  time:'11:00 AM', type:'Follow-up',       status:'confirmed', insurance:'Intellicare',    notes:'Acne treatment review — 3rd session.',                 createdAt:'2026-06-18 16:00', workflowStep:'validated',    priority:'low' },
+  { id:'A007', patientId:'P007', patientName:'Elena Villanueva', doctorId:1, doctorName:'Dr. Sarah Chen',    specialty:'Cardiology',      branch:'City Clinic',  date:d(0),  time:'9:00 AM',  type:'Check-up',        status:'completed', insurance:'Insular Health', notes:'Annual cardiac screen completed. Normal results.',      createdAt:'2026-06-15 11:00', workflowStep:'completed',    priority:'normal' },
+  { id:'A008', patientId:'P008', patientName:'Marco Dela Cruz',  doctorId:3, doctorName:'Dr. Amara Patel',   specialty:'Pediatrics',      branch:'East Clinic',  date:d(-2), time:'2:00 PM',  type:'New Patient',     status:'completed', insurance:'PhilHealth',     notes:'First visit. Growth charts normal for age 20.',        createdAt:'2026-06-18 10:30', workflowStep:'completed',    priority:'normal' },
+  { id:'A009', patientId:'P001', patientName:'Maria Santos',     doctorId:6, doctorName:'Dr. Lucas Kim',     specialty:'Family Medicine', branch:'City Clinic',  date:d(-3), time:'10:30 AM', type:'Follow-up',       status:'completed', insurance:'Maxicare',       notes:'Blood pressure recheck. Now 130/85.',                  createdAt:'2026-06-14 09:00', workflowStep:'completed',    priority:'normal' },
+  { id:'A010', patientId:'P003', patientName:'Ana Cruz',         doctorId:2, doctorName:'Dr. Michael Torres',specialty:'Orthopedics',     branch:'North Branch', date:d(-4), time:'3:00 PM',  type:'Consult',         status:'cancelled', insurance:'MediCard',       notes:'Patient requested reschedule — conflict at work.',     createdAt:'2026-06-12 14:00', workflowStep:'cancelled',    priority:'normal' },
+  { id:'A011', patientId:'P006', patientName:'Kevin Garcia',     doctorId:4, doctorName:"Dr. James O'Brien", specialty:'Dermatology',     branch:'City Clinic',  date:d(3),  time:'11:00 AM', type:'Follow-up',       status:'confirmed', insurance:'Cocolife',       notes:'Post-treatment assessment.',                           createdAt:'2026-06-20 11:30', workflowStep:'endorsed',     priority:'low',    endorsedTo:'nurse001', endorsedAt:'2026-06-21 14:00' },
+  { id:'A012', patientId:'P002', patientName:'Jose Reyes',       doctorId:5, doctorName:'Dr. Priya Sharma',  specialty:'Neurology',       branch:'West Branch',  date:d(4),  time:'9:30 AM',  type:'Consult',         status:'pending',   insurance:'PhilHealth',     notes:'MRI results review — ordered last week.',              createdAt:'2026-06-22 08:00', workflowStep:'submitted',    priority:'urgent' },
+  { id:'A013', patientId:'P005', patientName:'Patricia Tan',     doctorId:1, doctorName:'Dr. Sarah Chen',    specialty:'Cardiology',      branch:'City Clinic',  date:d(-5), time:'10:00 AM', type:'Consult',         status:'no-show',   insurance:'Maxicare',       notes:'Did not arrive. SMS sent, no response.',               createdAt:'2026-06-14 15:00', workflowStep:'completed',    priority:'normal' },
+  { id:'A014', patientId:'P004', patientName:'Ricardo Lim',      doctorId:6, doctorName:'Dr. Lucas Kim',     specialty:'Family Medicine', branch:'South Clinic', date:d(5),  time:'3:00 PM',  type:'Check-up',        status:'confirmed', insurance:'Intellicare',    notes:'Diabetes management check. A1c due.',                 createdAt:'2026-06-21 13:00', workflowStep:'validated',    priority:'urgent' },
+  { id:'A015', patientId:'P007', patientName:'Elena Villanueva', doctorId:3, doctorName:'Dr. Amara Patel',   specialty:'Pediatrics',      branch:'East Clinic',  date:d(6),  time:'2:30 PM',  type:'Follow-up',       status:'pending',   insurance:'Insular Health', notes:'Child development follow-up.',                         createdAt:'2026-06-22 10:00', workflowStep:'under_review', priority:'low', reviewedBy:'Support' },
 ];
 
 export const MOCK_NURSES = [
@@ -61,15 +68,25 @@ export const MOCK_NURSES = [
   { id: 'nurse006', name: 'Nurse Patricia Tan',  branch: 'West Branch'  },
 ];
 
-export const WEEKLY_DATA = [
-  { day:'Mon', date:'2026-06-22', count:4 },
-  { day:'Tue', date:'2026-06-23', count:2 },
-  { day:'Wed', date:'2026-06-24', count:1 },
-  { day:'Thu', date:'2026-06-25', count:1 },
-  { day:'Fri', date:'2026-06-26', count:1 },
-  { day:'Sat', date:'2026-06-27', count:1 },
-  { day:'Sun', date:'2026-06-28', count:1 },
-];
+function _getWeekDates(): string[] {
+  const now = new Date();
+  const dow = now.getDay();
+  const diff = dow === 0 ? -6 : 1 - dow;
+  const mon = new Date(now);
+  mon.setDate(now.getDate() + diff);
+  return Array.from({ length: 7 }, (_, i) => {
+    const dt = new Date(mon);
+    dt.setDate(mon.getDate() + i);
+    return dt.toISOString().slice(0, 10);
+  });
+}
+const _weekDates = _getWeekDates();
+const _countMap: Record<string, number> = {};
+MOCK_APPOINTMENTS.forEach(a => { _countMap[a.date] = (_countMap[a.date] ?? 0) + 1; });
+
+export const WEEKLY_DATA = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => ({
+  day, date: _weekDates[i], count: _countMap[_weekDates[i]] ?? 0,
+}));
 
 export const SPECIALTY_DATA = [
   { name:'Cardiology',       count:4, color:'#5B65DC' },
@@ -90,12 +107,12 @@ export const ACTIVITY_LOG = [
   { id:7, time:'Yesterday',user:'System',  action:'End-of-day summary: 3 completed, 1 no-show, 0 cancellations',  type:'report'   },
 ];
 
-export const STATUS_META: Record<AppStatus, { bg:string; text:string; dot:string; label:string }> = {
-  confirmed:  { bg:'#ECFDF5', text:'#16A34A', dot:'#16A34A', label:'Confirmed'  },
-  pending:    { bg:'#FFFBEB', text:'#92400E', dot:'#F59E0B', label:'Pending'    },
-  completed:  { bg:'#F4F6F9', text:'#64748B', dot:'#94A3B8', label:'Completed'  },
-  cancelled:  { bg:'#FFF5F5', text:'#DC2626', dot:'#EF4444', label:'Cancelled'  },
-  'no-show':  { bg:'#FEF3F2', text:'#9F1239', dot:'#FB7185', label:'No-show'    },
+export const STATUS_META: Record<AppStatus, { bg:string; text:string; dot:string; label:string; icon:string }> = {
+  confirmed:  { bg:'#ECFDF5', text:'#16A34A', dot:'#16A34A', label:'Confirmed', icon:'check_circle' },
+  pending:    { bg:'#FFFBEB', text:'#92400E', dot:'#F59E0B', label:'Pending',   icon:'schedule'     },
+  completed:  { bg:'#F4F6F9', text:'#64748B', dot:'#94A3B8', label:'Completed', icon:'task_alt'     },
+  cancelled:  { bg:'#FFF5F5', text:'#DC2626', dot:'#EF4444', label:'Cancelled', icon:'cancel'       },
+  'no-show':  { bg:'#FEF3F2', text:'#9F1239', dot:'#FB7185', label:'No-show',   icon:'person_off'   },
 };
 
 export const WORKFLOW_META: Record<WorkflowStep, { label:string; color:string; bg:string; icon:string }> = {
@@ -134,11 +151,11 @@ export const SPECIALTY_FEE: Record<string, number> = {
 };
 
 export const ACTIVITY_ICON: Record<string, { icon:string; color:string }> = {
-  confirm:  { icon:'check_circle', color:'#16A34A' },
-  create:   { icon:'add_circle',   color:'#5B65DC' },
-  cancel:   { icon:'cancel',       color:'#DC2626' },
-  complete: { icon:'task_alt',     color:'#64748B' },
-  edit:     { icon:'edit',         color:'#F59E0B' },
-  notify:   { icon:'notifications',color:'#0EA5E9' },
-  report:   { icon:'summarize',    color:'#8B5CF6' },
+  confirm:  { icon:'check_circle',  color:'#16A34A' },
+  create:   { icon:'add_circle',    color:'#5B65DC' },
+  cancel:   { icon:'cancel',        color:'#DC2626' },
+  complete: { icon:'task_alt',      color:'#64748B' },
+  edit:     { icon:'edit',          color:'#F59E0B' },
+  notify:   { icon:'notifications', color:'#0EA5E9' },
+  report:   { icon:'summarize',     color:'#8B5CF6' },
 };

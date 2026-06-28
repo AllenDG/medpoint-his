@@ -44,7 +44,7 @@ export function BookPage({
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               {[
-                { icon: 'verified', text: 'DOH Accredited' },
+                { icon: 'workspace_premium', text: 'Board-Certified' },
                 { icon: 'health_and_safety', text: 'Insurance Ready' },
                 { icon: 'timer', text: 'Live Availability' },
               ].map(b => (
@@ -170,7 +170,7 @@ export function BookPage({
           {/* Trust signals */}
           <div className="flex flex-col gap-2">
             {[
-              { icon: 'verified',        text: 'All doctors DOH-accredited' },
+              { icon: 'workspace_premium', text: 'All doctors board-certified' },
               { icon: 'health_and_safety', text: 'Insurance pre-verified' },
               { icon: 'lock',            text: 'Secure & private booking' },
             ].map(s => (

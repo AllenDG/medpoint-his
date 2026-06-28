@@ -7,7 +7,7 @@ export function AboutPage() {
       {/* ── Hero Banner ── */}
       <section className="py-[80px] pb-[72px] text-center relative overflow-hidden" style={{ background: '#122056' }}>
         <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle,#fff 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
-        <div className="max-w-[820px] mx-auto px-10 relative z-10">
+        <div className="max-w-[820px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
           <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-4" style={{ background: 'rgba(91,101,220,.25)', border: '1px solid rgba(91,101,220,.4)' }}>
             <span className="text-[11px] font-semibold uppercase tracking-[.08em]" style={{ color: '#A5B0FF' }}>About MedPoint Hospital</span>
           </div>
@@ -15,7 +15,7 @@ export function AboutPage() {
             Trusted care for every<br />Filipino family.
           </h1>
           <p className="text-base leading-[1.75] max-w-[580px] mx-auto" style={{ color: 'rgba(255,255,255,.75)' }}>
-            A DOH-accredited, multi-specialty hospital serving Metro Manila with compassion, transparency, and world-class facilities since 2010.
+            A licensed, multi-specialty hospital serving Metro Manila with compassion, transparency, and world-class facilities since 2010.
           </p>
           <div className="flex items-center justify-center gap-8 mt-10 flex-wrap">
             {[
@@ -38,7 +38,7 @@ export function AboutPage() {
 
       {/* ── Our Story ── */}
       <section className="bg-white py-[88px]">
-        <div className="max-w-[1440px] mx-auto px-10 grid gap-[72px] items-center about-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 grid gap-[72px] items-center about-grid">
           <div data-animate="">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-4" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>Our Story</span>
@@ -50,7 +50,7 @@ export function AboutPage() {
               MedPoint Hospital was founded in 2010 by a group of board-certified physicians who saw a clear gap in Metro Manila's healthcare landscape: patients needed immediate access to genuine specialist expertise — delivered with real, patient-first service and without the red tape.
             </p>
             <p className="text-[15px] leading-[1.75] mb-6" style={{ color: '#475569' }}>
-              Over 15 years, we've grown to 5 clinic branches, 50+ specialists, a DOH-accredited facility standard, and a fully digital patient experience. Our growth has always been guided by a single mission: make quality healthcare as accessible as a phone call.
+              Over 15 years, we've grown to 5 clinic branches, 50+ specialists, a fully licensed facility, and a fully digital patient experience. Our growth has always been guided by a single mission: make quality healthcare as accessible as a phone call.
             </p>
             <div className="grid grid-cols-2 gap-3">
               {MILESTONES.map(m => (
@@ -65,8 +65,8 @@ export function AboutPage() {
             <img src="/images/hero-page.png" alt="MedPoint Hospital" className="w-full h-[420px] object-cover block" />
             <div className="absolute inset-0 flex items-end p-6 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(18,32,86,.85) 0%, transparent 55%)' }}>
               <div>
-                <div className="text-white text-[15px] font-semibold mb-1">DOH-Accredited Facility</div>
-                <div className="text-[13px]" style={{ color: 'rgba(255,255,255,.65)' }}>Licensed since 2010 · JCI-standard protocols</div>
+                <div className="text-white text-[15px] font-semibold mb-1">Licensed Healthcare Facility</div>
+                <div className="text-[13px]" style={{ color: 'rgba(255,255,255,.65)' }}>Serving Manila since 2010 · JCI-standard protocols</div>
               </div>
             </div>
           </div>
@@ -75,7 +75,7 @@ export function AboutPage() {
 
       {/* ── Mission & Values ── */}
       <section style={{ background: '#F4F6F9', padding: '88px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-12">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>Mission & Values</span>
@@ -85,7 +85,7 @@ export function AboutPage() {
               Every decision at MedPoint is guided by four core principles that define how we care for our patients.
             </p>
           </div>
-          <div className="grid gap-[14px] pillar-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+          <div className="grid gap-[14px] pillar-grid">
             {VALUES.map((v, i) => (
               <div key={v.title} className="card py-[28px] px-[22px] text-center" data-animate="" data-delay={String(i * 80)}>
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-[14px]" style={{ background: '#122056' }}>
@@ -101,7 +101,7 @@ export function AboutPage() {
 
       {/* ── Leadership Team ── */}
       <section className="bg-white py-[88px]">
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-12">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>Leadership</span>
@@ -134,7 +134,7 @@ export function AboutPage() {
 
       {/* ── Accreditations ── */}
       <section style={{ background: '#F4F6F9', padding: '72px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <div data-animate="" className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 mb-3" style={{ background: '#EEEFFD', border: '1px solid #C7CAEF' }}>
               <span className="text-[11px] font-bold uppercase tracking-[.07em]" style={{ color: '#5B65DC' }}>Certifications</span>
@@ -159,7 +159,7 @@ export function AboutPage() {
 
       {/* ── Stats ── */}
       <section style={{ background: '#122056', padding: '56px 0' }}>
-        <div className="max-w-[1440px] mx-auto px-10 grid stat-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 grid stat-grid">
           {STATS.map((st, i) => (
             <div key={st.label} className="text-center py-6 px-4" style={{ borderRight: i < STATS.length - 1 ? '1px solid rgba(255,255,255,.08)' : 'none' }}>
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(91,101,220,.3)' }}>
